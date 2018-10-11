@@ -1,0 +1,36 @@
+{
+  "name": "spokkz-ontology-smart-contracts",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "init": "npm run init:python",
+    "init:python": "cd contracts && virtualenv venv && . venv/*/activate && pip3 install -r requirements.txt",
+    "clean": "npm run clean:python && npm run clean:build",
+    "clean:python": "cd contracts && rm -rf venv",
+    "clean:build": "rm -rf build",
+    "build": "cd contracts && . venv/*/activate && python3 compile.py -o ../build ./contracts/*.py",
+    "rebuild": "npm run clean && npm run init && npm run build",
+    "deploy:local": "npm run rebuild && ts-node utils/cli.ts --mode local --deploy",
+    "test": "npm run build && mocha -r ts-node/register ./test/**/*.ts --timeout 60000"
+  },
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/chai": "^4.1.4",
+    "@types/command-line-args": "^5.0.0",
+    "@types/glob": "^5.0.35",
+    "@types/mocha": "^5.2.5",
+    "@types/node": "^10.9.2",
+    "chai": "^4.1.2",
+    "command-line-args": "^5.0.2",
+    "mocha": "^5.2.0",
+    "ts-node": "^7.0.1",
+    "typescript": "^3.0.1"
+  },
+  "dependencies": {
+    "chalk": "^2.4.1",
+    "glob": "^7.1.2",
+    "ontology-ts-sdk": "^0.9.3"
+  }
+}

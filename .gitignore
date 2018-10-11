@@ -1,0 +1,9 @@
+**/__pycache__/**
+venv
+package-lock.json
+/ontio/*
+/build
+/node_modules
+/.idea
+/.DS_Store
+/experience

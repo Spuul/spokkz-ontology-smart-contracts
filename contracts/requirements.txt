@@ -1,0 +1,11 @@
+aenum==2.1.2
+astor==0.7.1
+colorama==0.3.9
+coz-bytecode==0.5.1
+logzero==1.5.0
+git+https://github.com/ontio/neo-boa.git
+pycryptodomex
+cryptography
+ecdsa
+base58
+requests

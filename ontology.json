@@ -1,0 +1,30 @@
+{
+  "avmFiles": "build/**/*.avm",
+  "testNetwork": "local",
+  "network": {
+    "local": {
+      "method": "rpc",
+      "host": "http://127.0.0.1:20336",
+      "wallet": {
+        "file": "wallet/wallet_local.dat",
+        "password": "password"
+      }
+    },
+
+    "testnet": {
+      "method": "rpc",
+      "host": "http://polaris1.ont.io:20336",
+      "wallet": {
+        "address": "AazEvfQPcQ2GEFFPLF1ZLwQ7K5jDn81hve",
+        "privateKey": "75de8489fcb2dcaf2ef3cd607feffde18789de7da129b5e97c81e001793cb7cf"
+      }
+    },
+
+    "mainnet": {
+      "method": "rpc",
+      "host": "http://dappnode1.ont.io",
+      "port": "20336",
+      "wallet": {}
+    }
+  }
+}
