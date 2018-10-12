@@ -29,7 +29,7 @@ export class Deployer {
       '',
       true,
       '0',
-      '20600000',
+      '20400000',
       payer
     );
 
