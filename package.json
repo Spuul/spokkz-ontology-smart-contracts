@@ -5,11 +5,11 @@
   "main": "index.js",
   "scripts": {
     "init": "npm run init:python",
-    "init:python": "cd contracts && virtualenv venv && . venv/*/activate && pip3 install -r requirements.txt",
+    "init:python": "cd contracts && virtualenv venv && . venv/*/activate && pip install -r requirements.txt",
     "clean": "npm run clean:python && npm run clean:build",
     "clean:python": "cd contracts && rm -rf venv",
     "clean:build": "rm -rf build",
-    "build": "cd contracts && . venv/*/activate && python3 compile.py -o ../build ./contracts/*.py",
+    "build": "cd contracts && . venv/*/activate && python compile.py -o ../build ./contracts/*.py",
     "rebuild": "npm run clean && npm run init && npm run build",
     "deploy:local": "npm run rebuild && ts-node utils/cli.ts --mode local --deploy",
     "test": "npm run build && mocha -r ts-node/register ./test/**/*.ts --timeout 60000"
