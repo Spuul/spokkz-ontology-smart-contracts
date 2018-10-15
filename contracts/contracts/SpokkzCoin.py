@@ -12,7 +12,7 @@ TOKEN_SYMBOL = 'SPKZ'
 ################################################################################
 # TOKEN INFO CONSTANTS
 
-DEPLOYER = b"\xdf\x01t`\xc0\xf1\xb6\xfc\x16\xe6\x8f\x10\x9b\x15\xc5F\xc5W\xc5\xe0"
+DEPLOYER = ToScriptHash('Ac725LuR7wo481zvNmc9jerqCzoCArQjtw')
 INIT_SUPPLY = 1000000000
 TOKEN_DECIMALS = 8
 FACTOR = 100000000
@@ -93,7 +93,7 @@ def Deploy():
     is_witness = CheckWitness(DEPLOYER)
     is_deployed = Get(ctx, 'DEPLOYED')
     _ = Require(is_witness)                     # only can be initialized by deployer
-    # _ = Require(not is_deployed)                # only can deploy once
+    _ = Require(not is_deployed)                # only can deploy once
 
     Notify(['is_witness', is_witness, DEPLOYER])
 
