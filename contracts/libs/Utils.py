@@ -1,14 +1,12 @@
-
 from boa.interop.System.Storage import Put, Delete
 
 
 def Revert():
     """
-    Revert the transaction. The opcodes of this function is `09f7f6f5f4f3f2f1f000f0`,
-    but it will be changed to `ffffffffffffffffffffff` since opcode THROW doesn't
-    work, so, revert by calling unused opcode.
+    Revert the transaction by raising an exception.
     """
-    raise Exception(0xF0F1F2F3F4F5F6F7)
+    raise Exception(0x00)
+    return False
 
 
 def SafePut(context, key, value):
@@ -16,3 +14,4 @@ def SafePut(context, key, value):
         Delete(context, key)
     else:
         Put(context, key, value)
+    return True
