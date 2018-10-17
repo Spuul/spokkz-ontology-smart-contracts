@@ -71,13 +71,6 @@ describe('SpokkzCoin Contract', () => {
     payer?: Crypto.Address
   ) => Promise<void>;
 
-  let mint: (
-    _to: Crypto.Address,
-    _amount: BigNumber | string,
-    privateKey: Crypto.PrivateKey,
-    payer: Crypto.Address
-  ) => Promise<void>;
-
   let transferOwnership: (
     address: Crypto.Address,
     privateKey: Crypto.PrivateKey,
@@ -243,29 +236,6 @@ describe('SpokkzCoin Contract', () => {
       await waitForTransactionReceipt(client, txHash, timeout);
     };
 
-    mint = async (
-      _to: Crypto.Address,
-      _amount: BigNumber | string,
-      privateKey: Crypto.PrivateKey,
-      payer: Crypto.Address
-    ) => {
-      const tx = TransactionBuilder.makeInvokeTransaction(
-        'mint',
-        [
-          new Parameter('_to', ParameterType.ByteArray, _to.serialize()),
-          new Parameter('_amount', ParameterType.ByteArray, num2ByteArray(_amount))
-        ],
-        contract.address,
-        '0',
-        '20000',
-        payer
-      );
-
-      TransactionBuilder.signTransaction(tx, privateKey);
-      const txHash = (await client.sendRawTransaction(tx.serialize())).result;
-      await waitForTransactionReceipt(client, txHash, timeout);
-    };
-
     // generate 10 accounts for test.
     for (let i = 0; i < 10; ++i) {
       const privateKey = Crypto.PrivateKey.random();
@@ -414,45 +384,6 @@ describe('SpokkzCoin Contract', () => {
     // total supply. (Or, if the owner balance is less than the burn amount,
     // it can be also rejected)
     supplyAfterBurned.toString().should.be.equal(supplyBeforeBurned.toString());
-  });
-
-  it ('should mint token', async () => {
-    const mintValue = new BigNumber(1000);
-
-    const supplyBeforeMinted = await totalSupply();
-    // try to mint 1000 tokens.
-    await mint(address, mintValue, privateKey, address);
-    const supplyAfterMinted = await totalSupply();
-
-    // the total supply should be changed.
-    supplyBeforeMinted.plus(1000).toString().should.be.equal(supplyAfterMinted.toString());
-  });
-
-  it ('should not mint tokens by other', async () => {
-    const [ other ] = randomAccount;
-    const mintValue = new BigNumber(1000);
-
-    const supplyBeforeMinted = await totalSupply();
-
-    // try to mint 1000 tokens by other address, not owner.
-    await mint(other.address,  mintValue, other.privateKey, other.address);
-    const supplyAfterMinted = await totalSupply();
-
-    // the total supply should be equal since the `mint` call should be rejected.
-    supplyAfterMinted.toString().should.be.equal(supplyBeforeMinted.toString());
-  });
-
-  it ('should not mint minus value', async () => {
-    const mintValue = 'ff';
-
-    const supplyBeforeMinted = await totalSupply();
-
-    // try to mint -1 token.
-    await mint(address, mintValue, privateKey, address);
-    const supplyAfterMinted = await totalSupply();
-
-    // the total supply should not be changed since the `mint` call should be rejected.
-    supplyAfterMinted.toString().should.be.equal(supplyBeforeMinted.toString());
   });
 
   it ('should approve token', async () => {
@@ -634,20 +565,14 @@ describe('SpokkzCoin Contract', () => {
     beforeOwner.toBase58().should.be.not.equal(other.address.toBase58());
     afterOwner.toBase58().should.be.equal(other.address.toBase58());
 
-    // new owner can mint and burn tokens
+    // new owner can burn tokens
     const beforeSupply = await totalSupply();
-
-    await mint(other.address, new BigNumber(1000), other.privateKey, other.address);
-    const afterMintSupply = await totalSupply();
-
-    // after mint, the total supply will be changed if success to transfer ownership
-    beforeSupply.plus(1000).toString().should.be.equal(afterMintSupply.toString());
 
     await burn(new BigNumber(1000), other.privateKey, other.address);
     const afterBurnSupply = await totalSupply();
 
     // after burn, the total supply will be changed.
-    afterBurnSupply.plus(1000).toString().should.be.equal(afterMintSupply.toString());
+    afterBurnSupply.plus(1000).toString().should.be.equal(beforeSupply.toString());
 
     // restore the owner
     await transferOwnership(address, other.privateKey, other.address);

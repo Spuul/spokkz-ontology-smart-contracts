@@ -73,10 +73,6 @@ def Main(operation, args):
         if len(args) == 2:
             ret = Allowance(args[0], args[1])
             return ret
-    elif operation == 'mint':
-        if len(args) == 2:
-            ret = Mint(args[0], args[1])
-            return ret
     elif operation == 'burn':
         if len(args) == 1:
             ret = Burn(args[0])
@@ -94,7 +90,7 @@ def Deploy():
     Constructor of this contract. Only deployer hard-coded can call this function
     and cannot call this function after called once.
     Followings are initialization list for this token
-    1. Transfer the owner to the deployer. (Owner can mint and burn the token)
+    1. Transfer the owner to the deployer. (Owner can burn the token)
     2. Supply initial coin to the deployer.
     """
     ctx = GetContext()
@@ -123,7 +119,7 @@ def Deploy():
 def TotalSupply():
     """
     Gets the total supply for SPKZ token. The total supply can be changed by
-    owner's invoking function calls for minting and burning.
+    owner's invoking function calls for burning.
     """
     return _totalSupply(GetContext())
 
@@ -205,19 +201,6 @@ def Burn(_amount):
     owner_key = Get(ctx, OWNER_KEY)
     burned = _burn(ctx, owner_key, _amount)
     return burned
-
-
-def Mint(_to, _amount):
-    """
-    Mints the amount of SPKZ token.
-    :param _to: address to receive token.
-    :param _amount: the amount to mint.
-    """
-    ctx = GetContext()
-    _ = _onlyOwner(ctx)                 # only owner can mint token
-    minted = _mint(ctx, _to, _amount)
-    return minted
-
 
 def TransferOwnership(_account):
     """
@@ -321,23 +304,6 @@ def _burn(_context, _account, _amount):
     account_key = concat(OWN_PREFIX, _account)
     _ = SafePut(_context, account_key, account_val)
     _ = SafePut(_context, SPKZ_SUPPLY_KEY, total_supply)
-    return True
-
-
-def _mint(_context, _to, _amount):
-    _ = Require(_amount > 0)            # mint value must be over 0
-    _ = RequireScriptHash(_to)          # to address should
-
-    total_supply = _totalSupply(_context)
-    to_val = _accountValue(_context, _to)
-
-    # Add total supply value and give the token to the to-address
-    total_supply += _amount
-    to_val += _amount
-
-    _ = SafePut(_context, SPKZ_SUPPLY_KEY, total_supply)
-    to_account_key = concat(OWN_PREFIX, _to)
-    _ = SafePut(_context, to_account_key, to_val)
     return True
 
 
