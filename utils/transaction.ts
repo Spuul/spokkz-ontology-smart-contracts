@@ -28,7 +28,6 @@ export async function waitForTransactionReceipt(client: any, txHash: string, opt
           if (checkCnt > checkOut) {
             clearTimeout(minedCheckHandler);
             resolve(false);
-            // reject(new Error(`failed to mined over ${timeout} seconds`));
           } else {
             ++checkCnt;
           }
