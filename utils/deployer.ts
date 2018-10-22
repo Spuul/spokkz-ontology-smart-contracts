@@ -72,8 +72,8 @@ export class DeployedTransaction {
         this.initFunc,
         [],
         this.address,
-        '500',
-        '20000',
+        '0',
+        '20600000',
         this.payer
       );
       TransactionBuilder.signTransaction(tx, this.privateKey);

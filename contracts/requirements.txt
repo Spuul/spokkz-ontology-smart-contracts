@@ -9,3 +9,6 @@ cryptography
 ecdsa
 base58
 requests
+Flask
+Flask-JSGlue
+ontology-python-sdk
