@@ -88,6 +88,7 @@ new Vue({
                             confirmButtonText: 'OK',
                             cancelButtonText: 'Cancel',
                             inputPattern: /\S{1,}/,
+                            inputType: 'password',
                             inputErrorMessage: 'invalid password'
                         });
                         password = password.value;
@@ -180,7 +181,6 @@ new Vue({
                 message: this.assetSelect.concat(' Balance: ', response.data.result),
                 type: 'success'
             });
-            console.log(response);
         },
         async getName() {
             try {
@@ -254,7 +254,6 @@ new Vue({
             } catch (error) {
                 console.log(error);
             }
-
         },
         async tabClickHandler(tab, event) {
             if (tab.label === 'DApp Settings') {
@@ -289,6 +288,7 @@ new Vue({
                     confirmButtonText: 'OK',
                     cancelButtonText: 'Cancel',
                     inputPattern: /\S{1,}/,
+                    inputType: 'password',
                     inputErrorMessage: 'invalid password'
                 });
                 password = password.value;
@@ -331,7 +331,17 @@ new Vue({
                     });
                 }
             } catch (error) {
-                console.log(error);
+                if (error.response.status === 400 || error.response.status === 500) {
+                    this.$notify({
+                        type: 'error',
+                        title: 'Query failed!',
+                        message: error.response.data.result,
+                        duration: 4000
+                    });
+                }
+                else {
+                    console.log(error);
+                }
             }
         },
         async accountChange(value) {
@@ -376,7 +386,8 @@ new Vue({
             }
             let password = await this.$prompt('Account Password', 'Import Account', {
                 confirmButtonText: 'OK',
-                cancelButtonText: 'Cancel'
+                cancelButtonText: 'Cancel',
+                inputType: 'password',
             }).catch(() => {
                 this.$message.warning('Import canceled');
             });
@@ -413,6 +424,7 @@ new Vue({
                     confirmButtonText: 'OK',
                     cancelButtonText: 'Cancel',
                     inputPattern: /\S{1,}/,
+                    inputType: 'password',
                     inputErrorMessage: 'invalid password'
                 });
                 password = password.value;
@@ -551,6 +563,7 @@ new Vue({
                         confirmButtonText: 'OK',
                         cancelButtonText: 'Cancel',
                         inputPattern: /\S{1,}/,
+                        inputType: 'password',
                         inputErrorMessage: 'invalid password'
                     });
                     password = password.value;
@@ -591,12 +604,16 @@ new Vue({
                         });
                     }
                 } catch (error) {
-                    if (error.response.status === 400) {
+                    if (error.response.status === 400 || error.response.status === 500) {
                         this.$notify({
+                            type: 'error',
                             title: 'Transfer failed!',
                             message: error.response.data.result,
-                            duration: 800
-                        })
+                            duration: 4000
+                        });
+                    }
+                    else {
+                        console.log(error);
                     }
                 }
             }
@@ -615,7 +632,7 @@ new Vue({
                     title: 'Allowance Error',
                     type: 'error',
                     message: 'Please input the spender address',
-                    duration: 1200
+                    duration: 2000
                 });
                 return;
             }
@@ -652,12 +669,22 @@ new Vue({
                         });
                     }
                 } catch (error) {
-                    this.$notify({
-                        title: 'Allowance',
-                        type: 'error',
-                        message: 'query allowance failed',
-                        duration: 1200
-                    });
+                    if (error.response.status === 400 || error.response.status === 500) {
+                        this.$notify({
+                            type: 'error',
+                            title: 'Query failed!',
+                            message: error.response.data.result,
+                            duration: 4000
+                        });
+                    }
+                    else {
+                        this.$notify({
+                            title: 'Query failed!',
+                            type: 'error',
+                            message: 'query allowance failed',
+                            duration: 3000
+                        });
+                    }
                 }
             }
             else {
@@ -673,6 +700,7 @@ new Vue({
             let password = await this.$prompt('Account Password', 'Approve', {
                 confirmButtonText: 'OK',
                 cancelButtonText: 'Cancel',
+                inputType: 'password',
                 inputPattern: /\S{1,}/,
                 inputErrorMessage: 'invalid password'
             }).catch(() => {
@@ -692,7 +720,17 @@ new Vue({
                     duration: 2000
                 });
             } catch (error) {
-                console.log(error);
+                if (error.response.status === 400 || error.response.status === 500) {
+                    this.$notify({
+                        type: 'error',
+                        title: 'Approve failed!',
+                        message: error.response.data.result,
+                        duration: 4000
+                    });
+                }
+                else {
+                    console.log(error);
+                }
             }
         },
         async createAccount() {
@@ -711,6 +749,7 @@ new Vue({
                 confirmButtonText: 'OK',
                 cancelButtonText: 'Cancel',
                 inputPattern: /\S{1,}/,
+                inputType: 'password',
                 inputErrorMessage: 'invalid password'
             }).catch(() => {
                 this.$message.warning('Import canceled');

@@ -13,7 +13,7 @@
     "rebuild": "npm run clean && npm run init && npm run build",
     "deploy:local": "npm run rebuild && ts-node utils/cli.ts --mode local --deploy",
     "test": "npm run build && mocha -r ts-node/register ./test/**/*.ts --timeout 60000",
-    "page": "cd contracts && . venv/*/activate && python ../src/tutorial_token.py"
+    "page": "cd contracts && . venv/*/activate && python ../src/token_explorer.py"
   },
   "author": "",
   "license": "MIT",

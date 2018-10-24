@@ -11,7 +11,7 @@ from ontology.utils import util
 
 static_folder = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'static')
 template_folder = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'static', 'html')
-app = Flask('SpokkzToken', static_folder=static_folder, template_folder=template_folder)
+app = Flask('SpokkzCoin', static_folder=static_folder, template_folder=template_folder)
 app.config.from_object('default_settings')
 jsglue = JSGlue()
 jsglue.init_app(app)
@@ -23,8 +23,7 @@ oep4.set_contract_address(app.config['DEFAULT_CONTRACT_ADDRESS'])
 gas_price = app.config['GAS_PRICE']
 gas_limit = app.config['GAS_LIMIT']
 wallet_manager = WalletManager()
-wallet_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'wallet', 'wallet_local.dat')
-print(wallet_path)
+wallet_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'wallet', 'wallet_local.data')
 if os.path.isfile(wallet_path):
     wallet_manager.open_wallet(wallet_path)
 
@@ -218,13 +217,13 @@ def query_balance():
         if asset_select == 'OEP4 Token':
             global oep4
             balance = oep4.balance_of(b58_address)
-            return json.jsonify({'result': balance}), 200
+            return json.jsonify({'result': str(balance)}), 200
         elif asset_select == 'ONT':
             balance = sdk.rpc.get_balance(b58_address)
-            return json.jsonify({'result': balance['ont']}), 200
+            return json.jsonify({'result': str(balance['ont'])}), 200
         elif asset_select == 'ONG':
             balance = sdk.rpc.get_balance(b58_address)
-            return json.jsonify({'result': balance['ong']}), 200
+            return json.jsonify({'result': str(balance['ong'])}), 200
         else:
             return json.jsonify({'result': 'query balance failed'}), 500
     except SDKException as e:
@@ -238,13 +237,15 @@ def transfer():
     amount = int(request.json.get('amount'))
     try:
         b58_from_address = wallet_manager.get_default_account().get_address()
-        from_acct = wallet_manager.get_account(b58_from_address, password)
+        try:
+            from_acct = wallet_manager.get_account(b58_from_address, password)
+        except SDKException as e:
+            return json.jsonify({'result': e.args[1]}), 500
         global oep4
         tx_hash = oep4.transfer(from_acct, b58_to_address, amount, from_acct, gas_limit, gas_price)
     except IndexError:
         return json.jsonify({'result': 'Please import an account'}), 400
     except SDKException as e:
-        print(e)
         return json.jsonify({'result': e.args[1]}), 500
     return json.jsonify({'result': tx_hash}), 200
 
@@ -256,7 +257,10 @@ def transfer_multi():
     args = json.loads(transfer_array)
     signers = list()
     for (item, password) in zip(args, password_array):
-        account = wallet_manager.get_account(item[0], password)
+        try:
+            account = wallet_manager.get_account(item[0], password)
+        except SDKException as e:
+            return json.jsonify({'result': e.args[1]}), 500
         signers.append(account)
     global oep4
     try:
@@ -290,7 +294,10 @@ def transfer_from():
     b58_from_address = request.json.get('b58_from_address')
     b58_to_address = request.json.get('b58_to_address')
     amount = int(request.json.get('amount'))
-    spender = wallet_manager.get_account(b58_spender_address, password)
+    try:
+        spender = wallet_manager.get_account(b58_spender_address, password)
+    except SDKException as e:
+        return json.jsonify({'result': e.args[1]}), 500
     global oep4
     try:
         tx_hash = oep4.transfer_from(spender, b58_from_address, b58_to_address, amount, spender, gas_limit, gas_price)
