@@ -41,51 +41,40 @@ ALLOWANCE_PREFIX = '___allow'
 
 def Main(operation, args):
     if operation == 'Deploy':
-        ret = Deploy()
-        return ret
-    elif operation == 'Name':
+        return Deploy()
+    if operation == 'Name':
         return TOKEN_NAME
-    elif operation == 'Decimals':
+    if operation == 'Decimals':
         return TOKEN_DECIMALS
-    elif operation == 'Symbol':
+    if operation == 'Symbol':
         return TOKEN_SYMBOL
-    elif operation == 'TotalSupply':
-        ret = TotalSupply()
-        return ret
-    elif operation == 'BalanceOf':
+    if operation == 'TotalSupply':
+        return TotalSupply()
+    if operation == 'BalanceOf':
         if len(args) == 1:
-            ret = BalanceOf(args[0])
-            return ret
-    elif operation == 'Transfer':
+            return BalanceOf(args[0])
+    if operation == 'Transfer':
         if len(args) == 3:
-            ret = Transfer(args[0], args[1], args[2])
-            return ret
-    elif operation == 'TransferMulti':
-        ret = TransferMulti(args)
-        return ret
-    elif operation == 'TransferFrom':
+            return Transfer(args[0], args[1], args[2])
+    if operation == 'TransferMulti':
+        return TransferMulti(args)
+    if operation == 'TransferFrom':
         if len(args) == 4:
-            ret = TransferFrom(args[0], args[1], args[2], args[3])
-            return ret
-    elif operation == 'Approve':
+            return TransferFrom(args[0], args[1], args[2], args[3])
+    if operation == 'Approve':
         if len(args) == 3:
-            ret = Approve(args[0], args[1], args[2])
-            return ret
-    elif operation == 'Allowance':
+            return Approve(args[0], args[1], args[2])
+    if operation == 'Allowance':
         if len(args) == 2:
-            ret = Allowance(args[0], args[1])
-            return ret
-    elif operation == 'Burn':
+            return Allowance(args[0], args[1])
+    if operation == 'Burn':
         if len(args) == 1:
-            ret = Burn(args[0])
-            return ret
-    elif operation == 'TransferOwnership':
+            return Burn(args[0])
+    if operation == 'TransferOwnership':
         if len(args) == 1:
-            ret = TransferOwnership(args[0])
-            return ret
+            return TransferOwnership(args[0])
 
     return False
-
 
 def Deploy():
     """
@@ -196,6 +185,7 @@ def Burn(_amount):
     _onlyOwner(ctx)                             # only owner can burn the token
     owner_key = Get(ctx, OWNER_KEY)
     burned = _burn(ctx, owner_key, _amount)
+    Notify(['burn', _amount])
     return burned
 
 def TransferOwnership(_account):
