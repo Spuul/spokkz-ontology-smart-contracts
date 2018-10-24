@@ -38,46 +38,46 @@ ALLOWANCE_PREFIX = '___allow'
 #
 
 def Main(operation, args):
-    if operation == 'deploy':
+    if operation == 'Deploy':
         ret = Deploy()
         return ret
-    elif operation == 'name':
+    elif operation == 'Name':
         return TOKEN_NAME
-    elif operation == 'decimals':
+    elif operation == 'Decimals':
         return TOKEN_DECIMALS
-    elif operation == 'symbol':
+    elif operation == 'Symbol':
         return TOKEN_SYMBOL
-    elif operation == 'totalSupply':
+    elif operation == 'TotalSupply':
         ret = TotalSupply()
         return ret
-    elif operation == 'balanceOf':
+    elif operation == 'BalanceOf':
         if len(args) == 1:
             ret = BalanceOf(args[0])
             return ret
-    elif operation == 'transfer':
+    elif operation == 'Transfer':
         if len(args) == 3:
             ret = Transfer(args[0], args[1], args[2])
             return ret
-    elif operation == 'transferMulti':
+    elif operation == 'TransferMulti':
         ret = TransferMulti(args)
         return ret
-    elif operation == 'transferFrom':
+    elif operation == 'TransferFrom':
         if len(args) == 4:
             ret = TransferFrom(args[0], args[1], args[2], args[3])
             return ret
-    elif operation == 'approve':
+    elif operation == 'Approve':
         if len(args) == 3:
             ret = Approve(args[0], args[1], args[2])
             return ret
-    elif operation == 'allowance':
+    elif operation == 'Allowance':
         if len(args) == 2:
             ret = Allowance(args[0], args[1])
             return ret
-    elif operation == 'burn':
+    elif operation == 'Burn':
         if len(args) == 1:
             ret = Burn(args[0])
             return ret
-    elif operation == 'transferOwnership':
+    elif operation == 'TransferOwnership':
         if len(args) == 1:
             ret = TransferOwnership(args[0])
             return ret
