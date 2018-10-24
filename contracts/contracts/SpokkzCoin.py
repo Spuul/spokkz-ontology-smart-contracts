@@ -289,8 +289,6 @@ def _burn(_context, _account, _amount):
     account_val = _balanceOf(_context, _account)
     total_supply = _totalSupply(_context)
 
-    Require(_amount < total_supply)     # should be not over total supply
-
     # burn the token from account. It also subtract the total supply
     account_val = uSub(account_val, _amount)
     total_supply = uSub(total_supply, _amount)
