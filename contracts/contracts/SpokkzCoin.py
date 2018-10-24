@@ -97,8 +97,8 @@ def Deploy():
 
     is_witness = CheckWitness(DEPLOYER)
     is_deployed = Get(ctx, 'DEPLOYED')
-    _ = Require(is_witness)                     # only can be initialized by deployer
-    _ = Require(not is_deployed)                # only can deploy once
+    Require(is_witness)                     # only can be initialized by deployer
+    Require(not is_deployed)                # only can deploy once
 
     # disable to deploy again
     Put(ctx, 'DEPLOYED', 1)
@@ -142,9 +142,9 @@ def Transfer(_from, _to, _value):
     :param _to: receiver address.
     :param _value: SPKZ amount.
     """
-    _ = RequireWitness(_from)           # from address validation
+    RequireWitness(_from)           # from address validation
     ctx = GetContext()
-    _ = _transfer(ctx, _from, _to, _value)
+    _transfer(ctx, _from, _to, _value)
     Notify(['transfer', _from, _to, _value])
     return True
 
@@ -156,8 +156,8 @@ def TransferMulti(args):
     """
     for p in (args):
         arg_len = len(p)
-        _ = Require(arg_len == 3)
-        _ = Transfer(p[0], p[1], p[2])
+        Require(arg_len == 3)
+        Transfer(p[0], p[1], p[2])
     return True
 
 
@@ -171,7 +171,7 @@ def TransferFrom(_originator, _from, _to, _amount):
     :param _amount: SPKZ amount.
     """
     ctx = GetContext()
-    _ = _transferFrom(ctx, _originator, _from, _to, _amount)
+    _transferFrom(ctx, _originator, _from, _to, _amount)
     Notify(['transfer', _from, _to, _amount])
     return True
 
@@ -184,9 +184,9 @@ def Approve(_from, _to, _amount):
     :param _to: address to approve.
     :param _amount: SPKZ amount to approve.
     """
-    _ = RequireWitness(_from)       # only the token owner can approve
+    RequireWitness(_from)       # only the token owner can approve
     ctx = GetContext()
-    _ = _approve(ctx, _from, _to, _amount)
+    _approve(ctx, _from, _to, _amount)
     Notify(['approve', _from, _to, _amount])
     return True
 
@@ -197,7 +197,7 @@ def Burn(_amount):
     :param _amount: SPKZ amount to burn.
     """
     ctx = GetContext()
-    _ = _onlyOwner(ctx)                             # only owner can burn the token
+    _onlyOwner(ctx)                             # only owner can burn the token
     owner_key = Get(ctx, OWNER_KEY)
     burned = _burn(ctx, owner_key, _amount)
     return burned
@@ -232,8 +232,8 @@ def Allowance(_from, _to):
 # witness if necessary.
 
 def _transfer(_context, _from, _to, _value):
-    _ = Require(_value > 0)             # transfer value must be over 0
-    _ = RequireScriptHash(_to)          # to-address validation
+    Require(_value > 0)             # transfer value must be over 0
+    RequireScriptHash(_to)          # to-address validation
 
     from_val = _accountValue(_context, _from)
     to_val = _accountValue(_context, _to)
@@ -243,44 +243,44 @@ def _transfer(_context, _from, _to, _value):
 
     from_key = concat(OWN_PREFIX, _from)
     to_key = concat(OWN_PREFIX, _to)
-    _ = SafePut(_context, from_key, from_val)
-    _ = SafePut(_context, to_key, to_val)
+    SafePut(_context, from_key, from_val)
+    SafePut(_context, to_key, to_val)
 
     return True
 
 
 def _balanceOf(_context, _account):
-    _ = RequireScriptHash(_account)
+    RequireScriptHash(_account)
     account_key = concat(OWN_PREFIX, _account)
     balance = Get(_context, account_key)
     return balance
 
 
 def _transferFrom(_context, _originator, _from, _to, _amount):
-    _ = RequireWitness(_originator)
-    _ = RequireScriptHash(_from)
-    _ = RequireScriptHash(_to)
+    RequireWitness(_originator)
+    RequireScriptHash(_from)
+    RequireScriptHash(_to)
 
-    _ = Require(_amount > 0)
+    Require(_amount > 0)
 
     from_to_key = concat(_from, _originator)
     approve_key = concat(ALLOWANCE_PREFIX, from_to_key)
     approve_amount = Get(_context, approve_key)
     approve_amount = uSub(approve_amount, _amount)
 
-    _ = _transfer(_context, _from, _to, _amount)
-    _ = SafePut(_context, approve_key, approve_amount)
+    _transfer(_context, _from, _to, _amount)
+    SafePut(_context, approve_key, approve_amount)
 
     return True
 
 
 def _approve(_context, _from, _to, _amount):
-    _ = RequireScriptHash(_to)          # to-address validation
-    _ = Require(_amount >= 0)           # amount must be not minus value
+    RequireScriptHash(_to)          # to-address validation
+    Require(_amount >= 0)           # amount must be not minus value
 
     from_val = _accountValue(_context, _from)
 
-    _ = Require(from_val >= _amount)    # the token owner must have the amount over approved
+    Require(from_val >= _amount)    # the token owner must have the amount over approved
 
     from_to_key = concat(_from, _to)
     approve_key = concat(ALLOWANCE_PREFIX, from_to_key)
@@ -290,25 +290,25 @@ def _approve(_context, _from, _to, _amount):
 
 
 def _burn(_context, _account, _amount):
-    _ = Require(_amount > 0)                # the amount to burn should be over 0
+    Require(_amount > 0)                # the amount to burn should be over 0
 
     account_val = _balanceOf(_context, _account)
     total_supply = _totalSupply(_context)
 
-    _ = Require(_amount < total_supply)     # should be not over total supply
+    Require(_amount < total_supply)     # should be not over total supply
 
     # burn the token from account. It also subtract the total supply
     account_val = uSub(account_val, _amount)
     total_supply = uSub(total_supply, _amount)
 
     account_key = concat(OWN_PREFIX, _account)
-    _ = SafePut(_context, account_key, account_val)
-    _ = SafePut(_context, SPKZ_SUPPLY_KEY, total_supply)
+    SafePut(_context, account_key, account_val)
+    SafePut(_context, SPKZ_SUPPLY_KEY, total_supply)
     return True
 
 
 def _transferOwnership(_context, _account):
-    _ = RequireScriptHash(_account)
+    RequireScriptHash(_account)
     Put(_context, OWNER_KEY, _account)
     return True
 
@@ -322,7 +322,7 @@ def _onlyOwner(_context):
     storage key `___OWNER`, so check its value and invoker.
     """
     owner = Get(_context, OWNER_KEY)
-    _ = RequireWitness(owner)
+    RequireWitness(owner)
     return True
 
 
