@@ -6,6 +6,8 @@ from libs.SafeMath import *
 from libs.SafeCheck import *
 from libs.Utils import *
 
+ctx = GetContext()
+
 TOKEN_NAME = 'Spokkz Token'
 TOKEN_SYMBOL = 'SPKZ'
 
@@ -93,7 +95,6 @@ def Deploy():
     1. Transfer the owner to the deployer. (Owner can burn the token)
     2. Supply initial coin to the deployer.
     """
-    ctx = GetContext()
 
     is_witness = CheckWitness(DEPLOYER)
     is_deployed = Get(ctx, 'DEPLOYED')
@@ -121,7 +122,7 @@ def TotalSupply():
     Gets the total supply for SPKZ token. The total supply can be changed by
     owner's invoking function calls for burning.
     """
-    return _totalSupply(GetContext())
+    return _totalSupply(ctx)
 
 
 def BalanceOf(account):
@@ -129,7 +130,6 @@ def BalanceOf(account):
     Gets the SPKZ token balance of an account.
     :param account: account
     """
-    ctx = GetContext()
     balance = _balanceOf(ctx, account)
     return balance
 
@@ -143,7 +143,6 @@ def Transfer(_from, _to, _value):
     :param _value: SPKZ amount.
     """
     RequireWitness(_from)           # from address validation
-    ctx = GetContext()
     _transfer(ctx, _from, _to, _value)
     Notify(['transfer', _from, _to, _value])
     return True
@@ -170,7 +169,6 @@ def TransferFrom(_originator, _from, _to, _amount):
     :param _to: address to receive.
     :param _amount: SPKZ amount.
     """
-    ctx = GetContext()
     _transferFrom(ctx, _originator, _from, _to, _amount)
     Notify(['transfer', _from, _to, _amount])
     return True
@@ -185,7 +183,6 @@ def Approve(_from, _to, _amount):
     :param _amount: SPKZ amount to approve.
     """
     RequireWitness(_from)       # only the token owner can approve
-    ctx = GetContext()
     _approve(ctx, _from, _to, _amount)
     Notify(['approve', _from, _to, _amount])
     return True
@@ -196,7 +193,6 @@ def Burn(_amount):
     Burns the amount of SPKZ token from the owner's address.
     :param _amount: SPKZ amount to burn.
     """
-    ctx = GetContext()
     _onlyOwner(ctx)                             # only owner can burn the token
     owner_key = Get(ctx, OWNER_KEY)
     burned = _burn(ctx, owner_key, _amount)
@@ -207,7 +203,6 @@ def TransferOwnership(_account):
     Transfers the ownership of this contract to other.
     :param _account: address to transfer ownership.
     """
-    ctx = GetContext()
     _onlyOwner(ctx)
     transferred = _transferOwnership(ctx, _account)
     return transferred
@@ -220,7 +215,6 @@ def Allowance(_from, _to):
     :param _to: to address
     :return: the amount of allowance.
     """
-    ctx = GetContext()
     allowance = _allowance(ctx, _from, _to)
     return allowance
 
