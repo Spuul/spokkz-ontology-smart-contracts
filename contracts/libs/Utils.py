@@ -6,8 +6,6 @@ def Revert():
     Revert the transaction by raising an exception.
     """
     raise Exception(0x00)
-    return False
-
 
 def SafePut(context, key, value):
     if value == 0:
