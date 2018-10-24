@@ -219,14 +219,15 @@ def _transfer(_context, _from, _to, _value):
     Require(_value > 0)             # transfer value must be over 0
     RequireScriptHash(_to)          # to-address validation
 
-    from_val = _accountValue(_context, _from)
-    to_val = _accountValue(_context, _to)
+    from_key = concat(OWN_PREFIX, _from)
+    to_key = concat(OWN_PREFIX, _to)
+
+    from_val = Get(_context, from_key)
+    to_val = Get(_context, to_key)
 
     from_val = uSub(from_val, _value)
     to_val = to_val + _value
 
-    from_key = concat(OWN_PREFIX, _from)
-    to_key = concat(OWN_PREFIX, _to)
     SafePut(_context, from_key, from_val)
     SafePut(_context, to_key, to_val)
 
