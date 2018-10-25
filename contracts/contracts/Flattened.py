@@ -73,7 +73,7 @@ TOKEN_SYMBOL = 'SPKZ'
 ################################################################################
 # TOKEN INFO CONSTANTS
 
-DEPLOYER = ToScriptHash('AeMW5Q7ujm5gz1Xh7SkPe7Cp3mS8g7ofyq')
+DEPLOYER = ToScriptHash('Ac725LuR7wo481zvNmc9jerqCzoCArQjtw')
 INIT_SUPPLY = 1000000000
 TOKEN_DECIMALS = 8
 FACTOR = 100000000
@@ -98,44 +98,44 @@ ALLOWANCE_PREFIX = '___allow'
 ################################################################################
 #
 
-def Main(operation, args):
-    if operation == 'Deploy':
-        return Deploy()
-    if operation == 'Name':
+def main(operation, args):
+    if operation == 'deploy':
+        return deploy()
+    if operation == 'name':
         return TOKEN_NAME
-    if operation == 'Decimal':
+    if operation == 'decimal':
         return TOKEN_DECIMALS
-    if operation == 'Symbol':
+    if operation == 'symbol':
         return TOKEN_SYMBOL
-    if operation == 'TotalSupply':
-        return TotalSupply()
-    if operation == 'BalanceOf':
+    if operation == 'totalSupply':
+        return totalSupply()
+    if operation == 'balanceOf':
         if len(args) == 1:
-            return BalanceOf(args[0])
-    if operation == 'Transfer':
+            return balanceOf(args[0])
+    if operation == 'transfer':
         if len(args) == 3:
-            return Transfer(args[0], args[1], args[2])
-    if operation == 'TransferMulti':
-        return TransferMulti(args)
-    if operation == 'TransferFrom':
+            return transfer(args[0], args[1], args[2])
+    if operation == 'transferMulti':
+        return transferMulti(args)
+    if operation == 'transferFrom':
         if len(args) == 4:
-            return TransferFrom(args[0], args[1], args[2], args[3])
-    if operation == 'Approve':
+            return transferFrom(args[0], args[1], args[2], args[3])
+    if operation == 'approve':
         if len(args) == 3:
-            return Approve(args[0], args[1], args[2])
-    if operation == 'Allowance':
+            return approve(args[0], args[1], args[2])
+    if operation == 'allowance':
         if len(args) == 2:
-            return Allowance(args[0], args[1])
-    if operation == 'Burn':
+            return allowance(args[0], args[1])
+    if operation == 'burn':
         if len(args) == 1:
-            return Burn(args[0])
-    if operation == 'TransferOwnership':
+            return burn(args[0])
+    if operation == 'transferOwnership':
         if len(args) == 1:
-            return TransferOwnership(args[0])
+            return transferOwnership(args[0])
 
     return False
 
-def Deploy():
+def deploy():
     """
     Constructor of this contract. Only deployer hard-coded can call this function
     and cannot call this function after called once.
@@ -165,7 +165,7 @@ def Deploy():
     return True
 
 
-def TotalSupply():
+def totalSupply():
     """
     Gets the total supply for SPKZ token. The total supply can be changed by
     owner's invoking function calls for burning.
@@ -173,7 +173,7 @@ def TotalSupply():
     return _totalSupply(ctx)
 
 
-def BalanceOf(account):
+def balanceOf(account):
     """
     Gets the SPKZ token balance of an account.
     :param account: account
@@ -182,7 +182,7 @@ def BalanceOf(account):
     return balance
 
 
-def Transfer(_from, _to, _value):
+def transfer(_from, _to, _value):
     """
     Sends the amount of tokens from address `from` to address `to`. The parameter
     `from` must be the invoker.
@@ -196,7 +196,7 @@ def Transfer(_from, _to, _value):
     return True
 
 
-def TransferMulti(args):
+def transferMulti(args):
     """
     Sends tokens to the several people.
     :param args: transfer arguments array
@@ -204,11 +204,11 @@ def TransferMulti(args):
     for p in (args):
         arg_len = len(p)
         Require(arg_len == 3)
-        Transfer(p[0], p[1], p[2])
+        transfer(p[0], p[1], p[2])
     return True
 
 
-def TransferFrom(_originator, _from, _to, _amount):
+def transferFrom(_originator, _from, _to, _amount):
     """
     Transfers the amount of tokens in `from` address to `to` address by invoker.
     Only approved amount can be sent.
@@ -222,7 +222,7 @@ def TransferFrom(_originator, _from, _to, _amount):
     return True
 
 
-def Approve(_from, _to, _amount):
+def approve(_from, _to, _amount):
     """
     Approves `to` address to withdraw SPKZ token from the invoker's address. It
     overwrites the previous approval value.
@@ -236,7 +236,7 @@ def Approve(_from, _to, _amount):
     return True
 
 
-def Burn(_amount):
+def burn(_amount):
     """
     Burns the amount of SPKZ token from the owner's address.
     :param _amount: SPKZ amount to burn.
@@ -247,7 +247,7 @@ def Burn(_amount):
     Notify(['burn', _amount])
     return burned
 
-def TransferOwnership(_account):
+def transferOwnership(_account):
     """
     Transfers the ownership of this contract to other.
     :param _account: address to transfer ownership.
@@ -257,7 +257,7 @@ def TransferOwnership(_account):
     return transferred
 
 
-def Allowance(_from, _to):
+def allowance(_from, _to):
     """
     Gets the amount of allowance from address `from` to address `to`.
     :param _from: from address

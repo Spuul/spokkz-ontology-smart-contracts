@@ -101,7 +101,7 @@ describe('SpokkzCoin Contract', () => {
       payer: Crypto.Address
     ) => {
       const tx = TransactionBuilder.makeInvokeTransaction(
-        'TransferOwnership',
+        'transferOwnership',
         [
           new Parameter('_account', ParameterType.ByteArray, address.serialize())
         ],
@@ -137,7 +137,7 @@ describe('SpokkzCoin Contract', () => {
       payer: Crypto.Address
     ) => {
       const tx = TransactionBuilder.makeInvokeTransaction(
-        'Approve',
+        'approve',
         [
           new Parameter('_from', ParameterType.ByteArray, _from.serialize()),
           new Parameter('_to', ParameterType.ByteArray, _to.serialize()),
@@ -172,7 +172,7 @@ describe('SpokkzCoin Contract', () => {
       payer?: Crypto.Address
     ) => {
       const tx = TransactionBuilder.makeInvokeTransaction(
-        'Transfer',
+        'transfer',
         [
           new Parameter('_from', ParameterType.ByteArray, _from.serialize()),
           new Parameter('_to', ParameterType.ByteArray, _to.serialize()),
@@ -197,7 +197,7 @@ describe('SpokkzCoin Contract', () => {
       payer?: Crypto.Address
     ) => {
       const tx = TransactionBuilder.makeInvokeTransaction(
-        'TransferFrom',
+        'transferFrom',
         [
           new Parameter('_originator', ParameterType.ByteArray, _originator.serialize()),
           new Parameter('_from', ParameterType.ByteArray, _from.serialize()),
@@ -221,7 +221,7 @@ describe('SpokkzCoin Contract', () => {
       payer: Crypto.Address
     ) => {
       const tx = TransactionBuilder.makeInvokeTransaction(
-        'Burn',
+        'burn',
         [
           new Parameter('_amount', ParameterType.ByteArray, num2ByteArray(_amount))
         ],
@@ -246,7 +246,7 @@ describe('SpokkzCoin Contract', () => {
 
   it ('should not be able to be deployed by other.', async () => {
     const [ other ] = randomAccount;
-    const tx = TransactionBuilder.makeInvokeTransaction('Deploy', [], contract.address, '0', '20000', other.address);
+    const tx = TransactionBuilder.makeInvokeTransaction('deploy', [], contract.address, '0', '20000', other.address);
     TransactionBuilder.signTransaction(tx, other.privateKey);
 
     const txHash = (await client.sendRawTransaction(tx.serialize())).result;
@@ -260,7 +260,7 @@ describe('SpokkzCoin Contract', () => {
   it ('should deploy by deployer', async () => {
     const address = TestDeployer.forSign.address;
     const privateKey = TestDeployer.forSign.privateKey;
-    const tx = TransactionBuilder.makeInvokeTransaction('Deploy', [], contract.address, '0', '20000', address);
+    const tx = TransactionBuilder.makeInvokeTransaction('deploy', [], contract.address, '0', '20000', address);
     TransactionBuilder.signTransaction(tx, privateKey);
 
     const txHash = (await client.sendRawTransaction(tx.serialize())).result;
