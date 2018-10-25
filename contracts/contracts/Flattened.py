@@ -73,7 +73,7 @@ TOKEN_SYMBOL = 'SPKZ'
 ################################################################################
 # TOKEN INFO CONSTANTS
 
-DEPLOYER = ToScriptHash('Ac725LuR7wo481zvNmc9jerqCzoCArQjtw')
+DEPLOYER = ToScriptHash('AeMW5Q7ujm5gz1Xh7SkPe7Cp3mS8g7ofyq')
 INIT_SUPPLY = 1000000000
 TOKEN_DECIMALS = 8
 FACTOR = 100000000
@@ -103,7 +103,7 @@ def Main(operation, args):
         return Deploy()
     if operation == 'Name':
         return TOKEN_NAME
-    if operation == 'Decimals':
+    if operation == 'Decimal':
         return TOKEN_DECIMALS
     if operation == 'Symbol':
         return TOKEN_SYMBOL
