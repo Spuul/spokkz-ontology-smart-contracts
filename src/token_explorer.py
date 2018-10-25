@@ -23,7 +23,7 @@ oep4.set_contract_address(app.config['DEFAULT_CONTRACT_ADDRESS'])
 gas_price = app.config['GAS_PRICE']
 gas_limit = app.config['GAS_LIMIT']
 wallet_manager = WalletManager()
-wallet_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'wallet', 'wallet_local.data')
+wallet_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'wallet', 'wallet_local.dat')
 if os.path.isfile(wallet_path):
     wallet_manager.open_wallet(wallet_path)
 
@@ -134,7 +134,7 @@ def change_net():
                 result = ''.join(['remote rpc address set failed. the rpc address now used is ', sdk_rpc_address])
                 return json.jsonify({'result': result}), 409
     elif network_selected == 'Localhost':
-        remote_rpc_address = 'http://localhost:20336'
+        remote_rpc_address = 'http://127.0.0.1:20336'
         with app.app_context() as context:
             sdk.set_rpc(remote_rpc_address)
             old_remote_rpc_address = sdk.get_rpc()
