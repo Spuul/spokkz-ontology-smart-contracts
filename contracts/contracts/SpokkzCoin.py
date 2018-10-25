@@ -44,7 +44,7 @@ def main(operation, args):
         return deploy()
     if operation == 'name':
         return TOKEN_NAME
-    if operation == 'decimal':
+    if operation == 'decimals':
         return TOKEN_DECIMALS
     if operation == 'symbol':
         return TOKEN_SYMBOL
