@@ -145,7 +145,7 @@ def transferMulti(args):
     for p in (args):
         arg_len = len(p)
         Require(arg_len == 3)
-        transfer(p[0], p[1], p[2])
+        Require(transfer(p[0], [[1], p[2]))
     return True
 
 
@@ -183,9 +183,9 @@ def burn(_amount):
     :param _amount: SPKZ amount to burn.
     """
     _onlyOwner()                             # only owner can burn the token
-    owner_key = Get(ctx, OWNER_KEY)
-    burned = _burn(owner_key, _amount)
-    Notify(['burn', _amount])
+    owner = Get(ctx, OWNER_KEY)
+    burned = _burn(owner, _amount)
+    Notify(['burn', owner, _amount])
     return burned
 
 def transferOwnership(_account):
