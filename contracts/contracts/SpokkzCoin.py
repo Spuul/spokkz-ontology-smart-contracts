@@ -285,8 +285,8 @@ def _burn(_account, _amount):
     total_supply = uSub(total_supply, _amount)
 
     account_key = concat(OWN_PREFIX, _account)
-    SafePut(_context, account_key, account_val)
-    SafePut(_context, SPKZ_SUPPLY_KEY, total_supply)
+    SafePut(ctx, account_key, account_val)
+    SafePut(ctx, SPKZ_SUPPLY_KEY, total_supply)
     return True
 
 
