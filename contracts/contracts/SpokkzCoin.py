@@ -215,21 +215,21 @@ def allowance(_from, _to):
 # wouldn't check the witness validation, so caller function must check the
 # witness if necessary.
 
-def _transfer(_context, _from, _to, _value):
+def _transfer(_from, _to, _value):
     Require(_value > 0)             # transfer value must be over 0
     RequireScriptHash(_to)          # to-address validation
 
     from_key = concat(OWN_PREFIX, _from)
     to_key = concat(OWN_PREFIX, _to)
 
-    from_val = Get(_context, from_key)
-    to_val = Get(_context, to_key)
+    from_val = Get(ctx, from_key)
+    to_val = Get(ctx, to_key)
 
     from_val = uSub(from_val, _value)
     to_val = to_val + _value
 
-    SafePut(_context, from_key, from_val)
-    SafePut(_context, to_key, to_val)
+    SafePut(ctx, from_key, from_val)
+    SafePut(ctx, to_key, to_val)
 
     return True
 
@@ -253,7 +253,7 @@ def _transferFrom(_context, _originator, _from, _to, _amount):
     approve_amount = Get(_context, approve_key)
     approve_amount = uSub(approve_amount, _amount)
 
-    _transfer(_context, _from, _to, _amount)
+    _transfer(ctx, _from, _to, _amount)
     SafePut(_context, approve_key, approve_amount)
 
     return True
