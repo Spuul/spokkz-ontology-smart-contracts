@@ -158,7 +158,7 @@ def transferFrom(_originator, _from, _to, _amount):
     :param _to: address to receive.
     :param _amount: SPKZ amount.
     """
-    _transferFrom(ctx, _originator, _from, _to, _amount)
+    _transferFrom(_originator, _from, _to, _amount)
     Notify(['transfer', _from, _to, _amount])
     return True
 
@@ -241,7 +241,7 @@ def _balanceOf(_account):
     return balance
 
 
-def _transferFrom(_context, _originator, _from, _to, _amount):
+def _transferFrom(_originator, _from, _to, _amount):
     RequireWitness(_originator)
     RequireScriptHash(_from)
     RequireScriptHash(_to)
@@ -250,11 +250,11 @@ def _transferFrom(_context, _originator, _from, _to, _amount):
 
     from_to_key = concat(_from, _originator)
     approve_key = concat(ALLOWANCE_PREFIX, from_to_key)
-    approve_amount = Get(_context, approve_key)
+    approve_amount = Get(ctx, approve_key)
     approve_amount = uSub(approve_amount, _amount)
 
     _transfer(_from, _to, _amount)
-    SafePut(_context, approve_key, approve_amount)
+    SafePut(ctx, approve_key, approve_amount)
 
     return True
 
