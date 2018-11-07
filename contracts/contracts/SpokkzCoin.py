@@ -182,7 +182,7 @@ def burn(_amount):
     Burns the amount of SPKZ token from the owner's address.
     :param _amount: SPKZ amount to burn.
     """
-    _onlyOwner(ctx)                             # only owner can burn the token
+    _onlyOwner()                             # only owner can burn the token
     owner_key = Get(ctx, OWNER_KEY)
     burned = _burn(owner_key, _amount)
     Notify(['burn', _amount])
@@ -193,7 +193,7 @@ def transferOwnership(_account):
     Transfers the ownership of this contract to other.
     :param _account: address to transfer ownership.
     """
-    _onlyOwner(ctx)
+    _onlyOwner()
     transferred = _transferOwnership(ctx, _account)
     return transferred
 
@@ -299,12 +299,12 @@ def _transferOwnership(_context, _account):
 ################################################################################
 # modifiers
 
-def _onlyOwner(_context):
+def _onlyOwner():
     """
     Checks the invoker is the contract owner or not. Owner key is saved in the
     storage key `___OWNER`, so check its value and invoker.
     """
-    owner = Get(_context, OWNER_KEY)
+    owner = Get(ctx, OWNER_KEY)
     RequireWitness(owner)
     return True
 
@@ -323,7 +323,7 @@ def _totalSupply():
     return total_supply
 
 
-def _allowance(_context, _from, _to):
+def _allowance(_from, _to):
     from_to_key = concat(_from, _to)
     allowance_key = concat(ALLOWANCE_PREFIX, from_to_key)
     allowance = Get(_context, allowance_key)
