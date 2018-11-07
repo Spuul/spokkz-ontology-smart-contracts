@@ -119,7 +119,7 @@ def balanceOf(account):
     Gets the SPKZ token balance of an account.
     :param account: account
     """
-    balance = _balanceOf(ctx, account)
+    balance = _balanceOf(account)
     return balance
 
 
@@ -234,10 +234,10 @@ def _transfer(_from, _to, _value):
     return True
 
 
-def _balanceOf(_context, _account):
+def _balanceOf(_account):
     RequireScriptHash(_account)
     account_key = concat(OWN_PREFIX, _account)
-    balance = Get(_context, account_key)
+    balance = Get(ctx, account_key)
     return balance
 
 
@@ -277,7 +277,7 @@ def _approve(_context, _from, _to, _amount):
 def _burn(_context, _account, _amount):
     Require(_amount > 0)                # the amount to burn should be over 0
 
-    account_val = _balanceOf(_context, _account)
+    account_val = _balanceOf(_account)
     total_supply = _totalSupply()
 
     # burn the token from account. It also subtract the total supply
