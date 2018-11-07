@@ -172,7 +172,7 @@ def approve(_from, _to, _amount):
     :param _amount: SPKZ amount to approve.
     """
     RequireWitness(_from)       # only the token owner can approve
-    _approve(ctx, _from, _to, _amount)
+    _approve(_from, _to, _amount)
     Notify(['approve', _from, _to, _amount])
     return True
 
@@ -259,17 +259,17 @@ def _transferFrom(_originator, _from, _to, _amount):
     return True
 
 
-def _approve(_context, _from, _to, _amount):
+def _approve(_from, _to, _amount):
     RequireScriptHash(_to)          # to-address validation
     Require(_amount >= 0)           # amount must be not minus value
 
-    from_val = _accountValue(_context, _from)
+    from_val = _accountValue(_from)
 
     Require(from_val >= _amount)    # the token owner must have the amount over approved
 
     from_to_key = concat(_from, _to)
     approve_key = concat(ALLOWANCE_PREFIX, from_to_key)
-    SafePut(_context, approve_key, _amount)
+    SafePut(ctx, approve_key, _amount)
 
     return True
 
@@ -312,9 +312,9 @@ def _onlyOwner(_context):
 ################################################################################
 #
 
-def _accountValue(_context, _account):
+def _accountValue(_account):
     account_key = concat(OWN_PREFIX, _account)
-    account_balance = Get(_context, account_key)
+    account_balance = Get(ctx, account_key)
     return account_balance
 
 
