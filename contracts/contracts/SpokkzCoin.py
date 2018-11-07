@@ -145,7 +145,7 @@ def transferMulti(args):
     for p in (args):
         arg_len = len(p)
         Require(arg_len == 3)
-        Require(transfer(p[0], [[1], p[2]))
+        Require(transfer(p[0], p[1], p[2]))
     return True
 
 
@@ -158,7 +158,7 @@ def transferFrom(_originator, _from, _to, _amount):
     :param _to: address to receive.
     :param _amount: SPKZ amount.
     """
-    _transferFrom(_originator, _from, _to, _amount)
+    Require(_transferFrom(_originator, _from, _to, _amount))
     Notify(['transfer', _from, _to, _amount])
     return True
 
@@ -172,7 +172,7 @@ def approve(_from, _to, _amount):
     :param _amount: SPKZ amount to approve.
     """
     RequireWitness(_from)       # only the token owner can approve
-    _approve(_from, _to, _amount)
+    Require(_approve(_from, _to, _amount))
     Notify(['approve', _from, _to, _amount])
     return True
 
@@ -184,9 +184,9 @@ def burn(_amount):
     """
     _onlyOwner()                             # only owner can burn the token
     owner = Get(ctx, OWNER_KEY)
-    burned = _burn(owner, _amount)
+    Require(_burn(owner, _amount))
     Notify(['burn', owner, _amount])
-    return burned
+    return True
 
 def transferOwnership(_account):
     """
@@ -194,8 +194,8 @@ def transferOwnership(_account):
     :param _account: address to transfer ownership.
     """
     _onlyOwner()
-    transferred = _transferOwnership(_account)
-    return transferred
+    Require(_transferOwnership(_account))
+    return True
 
 
 def allowance(_from, _to):
