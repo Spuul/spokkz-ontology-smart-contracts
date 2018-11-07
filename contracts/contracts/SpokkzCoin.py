@@ -132,7 +132,7 @@ def transfer(_from, _to, _value):
     :param _value: SPKZ amount.
     """
     RequireWitness(_from)           # from address validation
-    _transfer(ctx, _from, _to, _value)
+    _transfer(_from, _to, _value)
     Notify(['transfer', _from, _to, _value])
     return True
 
@@ -253,7 +253,7 @@ def _transferFrom(_context, _originator, _from, _to, _amount):
     approve_amount = Get(_context, approve_key)
     approve_amount = uSub(approve_amount, _amount)
 
-    _transfer(ctx, _from, _to, _amount)
+    _transfer(_from, _to, _amount)
     SafePut(_context, approve_key, approve_amount)
 
     return True
