@@ -170,7 +170,7 @@ def totalSupply():
     Gets the total supply for SPKZ token. The total supply can be changed by
     owner's invoking function calls for burning.
     """
-    return _totalSupply(ctx)
+    return _totalSupply()
 
 
 def balanceOf(account):
@@ -178,7 +178,7 @@ def balanceOf(account):
     Gets the SPKZ token balance of an account.
     :param account: account
     """
-    balance = _balanceOf(ctx, account)
+    balance = _balanceOf(account)
     return balance
 
 
@@ -191,7 +191,7 @@ def transfer(_from, _to, _value):
     :param _value: SPKZ amount.
     """
     RequireWitness(_from)           # from address validation
-    _transfer(ctx, _from, _to, _value)
+    _transfer(_from, _to, _value)
     Notify(['transfer', _from, _to, _value])
     return True
 
@@ -204,7 +204,7 @@ def transferMulti(args):
     for p in (args):
         arg_len = len(p)
         Require(arg_len == 3)
-        transfer(p[0], p[1], p[2])
+        Require(transfer(p[0], p[1], p[2]))
     return True
 
 
@@ -217,7 +217,7 @@ def transferFrom(_originator, _from, _to, _amount):
     :param _to: address to receive.
     :param _amount: SPKZ amount.
     """
-    _transferFrom(ctx, _originator, _from, _to, _amount)
+    Require(_transferFrom(_originator, _from, _to, _amount))
     Notify(['transfer', _from, _to, _amount])
     return True
 
@@ -231,7 +231,7 @@ def approve(_from, _to, _amount):
     :param _amount: SPKZ amount to approve.
     """
     RequireWitness(_from)       # only the token owner can approve
-    _approve(ctx, _from, _to, _amount)
+    Require(_approve(_from, _to, _amount))
     Notify(['approve', _from, _to, _amount])
     return True
 
@@ -241,20 +241,20 @@ def burn(_amount):
     Burns the amount of SPKZ token from the owner's address.
     :param _amount: SPKZ amount to burn.
     """
-    _onlyOwner(ctx)                             # only owner can burn the token
-    owner_key = Get(ctx, OWNER_KEY)
-    burned = _burn(ctx, owner_key, _amount)
-    Notify(['burn', _amount])
-    return burned
+    _onlyOwner()                             # only owner can burn the token
+    owner = Get(ctx, OWNER_KEY)
+    Require(_burn(owner, _amount))
+    Notify(['burn', owner, _amount])
+    return True
 
 def transferOwnership(_account):
     """
     Transfers the ownership of this contract to other.
     :param _account: address to transfer ownership.
     """
-    _onlyOwner(ctx)
-    transferred = _transferOwnership(ctx, _account)
-    return transferred
+    _onlyOwner()
+    Require(_transferOwnership(_account))
+    return True
 
 
 def allowance(_from, _to):
@@ -274,33 +274,33 @@ def allowance(_from, _to):
 # wouldn't check the witness validation, so caller function must check the
 # witness if necessary.
 
-def _transfer(_context, _from, _to, _value):
+def _transfer(_from, _to, _value):
     Require(_value > 0)             # transfer value must be over 0
     RequireScriptHash(_to)          # to-address validation
 
     from_key = concat(OWN_PREFIX, _from)
     to_key = concat(OWN_PREFIX, _to)
 
-    from_val = Get(_context, from_key)
-    to_val = Get(_context, to_key)
+    from_val = Get(ctx, from_key)
+    to_val = Get(ctx, to_key)
 
     from_val = uSub(from_val, _value)
     to_val = to_val + _value
 
-    SafePut(_context, from_key, from_val)
-    SafePut(_context, to_key, to_val)
+    SafePut(ctx, from_key, from_val)
+    SafePut(ctx, to_key, to_val)
 
     return True
 
 
-def _balanceOf(_context, _account):
+def _balanceOf(_account):
     RequireScriptHash(_account)
     account_key = concat(OWN_PREFIX, _account)
-    balance = Get(_context, account_key)
+    balance = Get(ctx, account_key)
     return balance
 
 
-def _transferFrom(_context, _originator, _from, _to, _amount):
+def _transferFrom(_originator, _from, _to, _amount):
     RequireWitness(_originator)
     RequireScriptHash(_from)
     RequireScriptHash(_to)
@@ -309,61 +309,61 @@ def _transferFrom(_context, _originator, _from, _to, _amount):
 
     from_to_key = concat(_from, _originator)
     approve_key = concat(ALLOWANCE_PREFIX, from_to_key)
-    approve_amount = Get(_context, approve_key)
+    approve_amount = Get(ctx, approve_key)
     approve_amount = uSub(approve_amount, _amount)
 
-    _transfer(_context, _from, _to, _amount)
-    SafePut(_context, approve_key, approve_amount)
+    _transfer(_from, _to, _amount)
+    SafePut(ctx, approve_key, approve_amount)
 
     return True
 
 
-def _approve(_context, _from, _to, _amount):
+def _approve(_from, _to, _amount):
     RequireScriptHash(_to)          # to-address validation
     Require(_amount >= 0)           # amount must be not minus value
 
-    from_val = _accountValue(_context, _from)
+    from_val = _accountValue(_from)
 
     Require(from_val >= _amount)    # the token owner must have the amount over approved
 
     from_to_key = concat(_from, _to)
     approve_key = concat(ALLOWANCE_PREFIX, from_to_key)
-    SafePut(_context, approve_key, _amount)
+    SafePut(ctx, approve_key, _amount)
 
     return True
 
 
-def _burn(_context, _account, _amount):
+def _burn(_account, _amount):
     Require(_amount > 0)                # the amount to burn should be over 0
 
-    account_val = _balanceOf(_context, _account)
-    total_supply = _totalSupply(_context)
+    account_val = _balanceOf(_account)
+    total_supply = _totalSupply()
 
     # burn the token from account. It also subtract the total supply
     account_val = uSub(account_val, _amount)
     total_supply = uSub(total_supply, _amount)
 
     account_key = concat(OWN_PREFIX, _account)
-    SafePut(_context, account_key, account_val)
-    SafePut(_context, SPKZ_SUPPLY_KEY, total_supply)
+    SafePut(ctx, account_key, account_val)
+    SafePut(ctx, SPKZ_SUPPLY_KEY, total_supply)
     return True
 
 
-def _transferOwnership(_context, _account):
+def _transferOwnership(_account):
     RequireScriptHash(_account)
-    Put(_context, OWNER_KEY, _account)
+    Put(ctx, OWNER_KEY, _account)
     return True
 
 
 ################################################################################
 # modifiers
 
-def _onlyOwner(_context):
+def _onlyOwner():
     """
     Checks the invoker is the contract owner or not. Owner key is saved in the
     storage key `___OWNER`, so check its value and invoker.
     """
-    owner = Get(_context, OWNER_KEY)
+    owner = Get(ctx, OWNER_KEY)
     RequireWitness(owner)
     return True
 
@@ -371,19 +371,19 @@ def _onlyOwner(_context):
 ################################################################################
 #
 
-def _accountValue(_context, _account):
+def _accountValue(_account):
     account_key = concat(OWN_PREFIX, _account)
-    account_balance = Get(_context, account_key)
+    account_balance = Get(ctx, account_key)
     return account_balance
 
 
-def _totalSupply(_context):
-    total_supply = Get(_context, SPKZ_SUPPLY_KEY)
+def _totalSupply():
+    total_supply = Get(ctx, SPKZ_SUPPLY_KEY)
     return total_supply
 
 
-def _allowance(_context, _from, _to):
+def _allowance(_from, _to):
     from_to_key = concat(_from, _to)
     allowance_key = concat(ALLOWANCE_PREFIX, from_to_key)
-    allowance = Get(_context, allowance_key)
+    allowance = Get(ctx, allowance_key)
     return allowance
