@@ -184,7 +184,7 @@ def burn(_amount):
     """
     _onlyOwner(ctx)                             # only owner can burn the token
     owner_key = Get(ctx, OWNER_KEY)
-    burned = _burn(ctx, owner_key, _amount)
+    burned = _burn(owner_key, _amount)
     Notify(['burn', _amount])
     return burned
 
@@ -274,7 +274,7 @@ def _approve(_from, _to, _amount):
     return True
 
 
-def _burn(_context, _account, _amount):
+def _burn(_account, _amount):
     Require(_amount > 0)                # the amount to burn should be over 0
 
     account_val = _balanceOf(_account)
