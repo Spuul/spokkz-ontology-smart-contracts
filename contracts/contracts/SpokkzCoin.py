@@ -194,7 +194,7 @@ def transferOwnership(_account):
     :param _account: address to transfer ownership.
     """
     _onlyOwner()
-    transferred = _transferOwnership(ctx, _account)
+    transferred = _transferOwnership(_account)
     return transferred
 
 
@@ -290,9 +290,9 @@ def _burn(_account, _amount):
     return True
 
 
-def _transferOwnership(_context, _account):
+def _transferOwnership(_account):
     RequireScriptHash(_account)
-    Put(_context, OWNER_KEY, _account)
+    Put(ctx, OWNER_KEY, _account)
     return True
 
 
@@ -326,5 +326,5 @@ def _totalSupply():
 def _allowance(_from, _to):
     from_to_key = concat(_from, _to)
     allowance_key = concat(ALLOWANCE_PREFIX, from_to_key)
-    allowance = Get(_context, allowance_key)
+    allowance = Get(ctx, allowance_key)
     return allowance
