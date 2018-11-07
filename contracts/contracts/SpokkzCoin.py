@@ -111,7 +111,7 @@ def totalSupply():
     Gets the total supply for SPKZ token. The total supply can be changed by
     owner's invoking function calls for burning.
     """
-    return _totalSupply(ctx)
+    return _totalSupply()
 
 
 def balanceOf(account):
@@ -278,7 +278,7 @@ def _burn(_context, _account, _amount):
     Require(_amount > 0)                # the amount to burn should be over 0
 
     account_val = _balanceOf(_context, _account)
-    total_supply = _totalSupply(_context)
+    total_supply = _totalSupply()
 
     # burn the token from account. It also subtract the total supply
     account_val = uSub(account_val, _amount)
@@ -318,8 +318,8 @@ def _accountValue(_context, _account):
     return account_balance
 
 
-def _totalSupply(_context):
-    total_supply = Get(_context, SPKZ_SUPPLY_KEY)
+def _totalSupply():
+    total_supply = Get(ctx, SPKZ_SUPPLY_KEY)
     return total_supply
 
 
