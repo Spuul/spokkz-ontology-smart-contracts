@@ -42,7 +42,7 @@ def pay(_originator, _from, _amount, _order_id):
 def transferPaymentsReceived(amount):
     _onlyOwner()
     owner = Get(ctx, OWNER_KEY)
-    Require(SpokkzOEP4Contract('approve', GetExecutingScriptHash(), amount))
+    Require(SpokkzOEP4Contract('approve', GetExecutingScriptHash(), owner, amount))
 
 def _onlyOwner():
     owner = Get(ctx, OWNER_KEY)
