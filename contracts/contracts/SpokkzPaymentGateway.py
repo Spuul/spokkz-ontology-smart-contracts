@@ -3,12 +3,11 @@ from boa.interop.System.Runtime import *
 from boa.interop.System.App import RegisterAppCall
 from libs.SafeCheck import *
 
+ctx = GetContext()
 
 SpokkzOEP4Contract = RegisterAppCall('749a701ae89c0dbdab9b4b660ba84ee478004219', 'operation', 'args')
 
-
 OWNER = ToScriptHash('Ac725LuR7wo481zvNmc9jerqCzoCArQjtw')
-ctx = GetContext()
 
 OWNER_KEY = '___OWNER'
 PAYMENT_PREFIX = '_____pay'
@@ -18,7 +17,7 @@ def main(operation, args):
         return init()
 
     if operation == 'pay':
-        if len(args) != 2:
+        if len(args) != 4:
             return False
         return pay(args[0], args[1], args[3], args[4])
     if operation == 'transferPaymentsReceived':
@@ -31,6 +30,7 @@ def init():
     is_witness = CheckWitness(OWNER)
     Require(is_witness)
     Put(ctx, OWNER_KEY, OWNER)
+    return True
 
 
 def pay(_originator, _from, _amount, _order_id):
@@ -43,6 +43,7 @@ def transferPaymentsReceived(amount):
     _onlyOwner()
     owner = Get(ctx, OWNER_KEY)
     Require(SpokkzOEP4Contract('approve', GetExecutingScriptHash(), owner, amount))
+    return True
 
 def _onlyOwner():
     owner = Get(ctx, OWNER_KEY)
