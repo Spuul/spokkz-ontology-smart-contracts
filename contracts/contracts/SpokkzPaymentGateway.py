@@ -36,7 +36,7 @@ def init():
 def pay(_originator, _from, _amount, _order_id):
     Require(SpokkzOEP4Contract('transferFrom', _originator, _from, GetExecutingScriptHash(), _amount))
     payment_key = concat(PAYMENT_PREFIX, _order_id)
-    Put(ctx, approve_key, _amount)
+    Put(ctx, payment_key, _amount)
     return True
 
 def transferPaymentsReceived(amount):
