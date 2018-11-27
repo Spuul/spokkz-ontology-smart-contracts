@@ -16,37 +16,13 @@ ctx = GetContext()
 def main(operation, args):
     if operation == 'deploy':
         return deploy()
-    if operation == 'name':
-        return name()
-    if operation == 'transferz':
-        return transferz(args)
-    if operation == 'transferzFrom':
-        if len(args) == 4:
-            return transferzFrom(args[0],args[1],args[2],args[3])
-        return transferzFrom(args)
     if operation == 'pay':
         if len(args) == 3:
             return pay(args[0],args[1],args[2])
     if operation == 'transferOwnership':
         if len(args) == 1:
             return transferOwnership(args[0])
-
     return False
-
-def name():
-    token_name = SpokkzOEP4Contract('name',0)
-    Put(ctx, 'NAME', token_name)
-    return True
-
-def transferz(args):
-    Require(CallOep4Contract('transfer', args))
-    return True
-
-def transferzFrom(_originator, _from, _to, _amount):
-    originator = GetExecutingScriptHash()
-
-    Require(CallOep4Contract('transferFrom', [originator, _from, _to, _amount]))
-    return True
 
 def deploy():
     """
