@@ -634,7 +634,7 @@ describe('SpuulTokenization Contract', () => {
     payer?: Crypto.Address
   ) => Promise<void>;
 
-  let pay: (
+  let confirmPayment: (
     _from: Crypto.Address,
     _amount: string | BigNumber,
     _orderId: string,
@@ -791,7 +791,7 @@ describe('SpuulTokenization Contract', () => {
       await waitForTransactionReceipt(client, txHash, timeout);
     };
 
-    pay = async(
+    confirmPayment = async(
       _from: Crypto.Address,
       _amount: string | BigNumber,
       _orderId: string,
@@ -799,7 +799,7 @@ describe('SpuulTokenization Contract', () => {
       payer?: Crypto.Address
     ) => {
       const tx = TransactionBuilder.makeInvokeTransaction(
-        'pay',
+        'confirmPayment',
         [
           new Parameter('_from', ParameterType.ByteArray, _from.serialize()),
           new Parameter('_amount', ParameterType.ByteArray, num2ByteArray(_amount)),
@@ -908,7 +908,7 @@ describe('SpuulTokenization Contract', () => {
     (await getBalance(spuulTokenizationContract.address)).toString().should.be.equal(approveValue.toString())
   })
 
-  it('should pay by other', async () => {
+  it('should confirm payment from allowance', async () => {
     const [ other ] = randomAccount;
 
     // set up other to have balance and set up approved tokens
@@ -923,7 +923,7 @@ describe('SpuulTokenization Contract', () => {
 
     const beforeSpuulTokenizationContractBalance = await getBalance(spuulTokenizationContract.address);
 
-    await pay(other.address, orderAmount, orderId, other.privateKey, other.address);
+    await confirmPayment(other.address, orderAmount, orderId, other.privateKey, other.address);
     (await getBalance(spuulTokenizationContract.address)).toString().should.be.equal(beforeSpuulTokenizationContractBalance.plus(orderAmount).toString());
 
     const payment = await amountPaid(orderId);

@@ -16,9 +16,9 @@ ctx = GetContext()
 def main(operation, args):
     if operation == 'deploy':
         return deploy()
-    if operation == 'pay':
+    if operation == 'confirmPayment':
         if len(args) == 3:
-            return pay(args[0],args[1],args[2])
+            return confirmPayment(args[0],args[1],args[2])
     if operation == 'transferOwnership':
         if len(args) == 1:
             return transferOwnership(args[0])
@@ -49,8 +49,8 @@ def deploy():
     return True
 
 
-def pay(_from, _amount, _orderId):
-    Require(_pay(_from, _amount, _orderId))
+def confirmPayment(_from, _amount, _orderId):
+    Require(_confirmPayment(_from, _amount, _orderId))
     return True
 
 def transferOwnership(_account):
@@ -77,7 +77,7 @@ def _transferOwnership(_account):
     Put(ctx, OWNER_KEY, _account)
     return True
 
-def _pay(_from, _amount, _orderId):
+def _confirmPayment(_from, _amount, _orderId):
     originator = GetExecutingScriptHash()
     to = originator
 
