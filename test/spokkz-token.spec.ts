@@ -636,7 +636,6 @@ describe('SpuulTokenization Contract', () => {
 
   let pay: (
     _from: Crypto.Address,
-    _to: Crypto.Address,
     _amount: string | BigNumber,
     _orderId: string,
     privateKey: Crypto.PrivateKey,
@@ -646,7 +645,6 @@ describe('SpuulTokenization Contract', () => {
   let amountPaid: (
     _orderId: string
   ) => Promise<BigNumber>;
-
 
   let getName: (
   ) => Promise<string>;
@@ -795,7 +793,6 @@ describe('SpuulTokenization Contract', () => {
 
     pay = async(
       _from: Crypto.Address,
-      _to: Crypto.Address,
       _amount: string | BigNumber,
       _orderId: string,
       privateKey: Crypto.PrivateKey,
@@ -805,7 +802,6 @@ describe('SpuulTokenization Contract', () => {
         'pay',
         [
           new Parameter('_from', ParameterType.ByteArray, _from.serialize()),
-          new Parameter('_to', ParameterType.ByteArray, _to.serialize()),
           new Parameter('_amount', ParameterType.ByteArray, num2ByteArray(_amount)),
           new Parameter('_orderId', ParameterType.ByteArray, utils.str2hexstr(_orderId)),
         ],
@@ -894,105 +890,23 @@ describe('SpuulTokenization Contract', () => {
   //   finalOwner.toBase58().should.be.equal(beforeOwner.toBase58());
   // });
 
-  // it ('should not be able to pay without approved tokens by other', async () => {
-  //   const [ other ] = randomAccount;
-  //   const beforeOwnerBalance = await getBalance(address);
-  //
-  //   const order_id = 'TX0000';
-  //   const orderAmount = new BigNumber(1000);
-  //
-  //   // pay for an order
-  //   await payz(other.address, other.address, orderAmount, order_id, other.privateKey, other.address);
-  //
-  //   const afterOwnerBalance = await getBalance(address);
-  //   beforeOwnerBalance.toString().should.be.equal(afterOwnerBalance.toString());
-  // });
+  it('should be able to transfer to contract', async() => {
+    const approveValue = new BigNumber(100);
 
-  // it('should pay by other', async() => {
-  //   const [ other ] = randomAccount;
-  //   const amount = new BigNumber(10);
-  //   const orderId = "ORDERID123"
-  //
-  //   await pay(other.address, other.address, amount, orderId, other.privateKey, other.address);
-  //   (await amountPaid(orderId)).toString().should.be.equal(amount.toString());
-  //
-  // })
-  // it('should be able to transfer to contract', async() => {
-  //   const approveValue = new BigNumber(100);
-  //
-  //   await transfer(address, spuul_tokenization_contract.address, approveValue, privateKey);
-  //   (await getBalance(spuul_tokenization_contract.address)).toString().should.be.equal(approveValue.toString())
-  // })
+    await transfer(address, spuul_tokenization_contract.address, approveValue, privateKey);
+    (await getBalance(spuul_tokenization_contract.address)).toString().should.be.equal(approveValue.toString())
+  })
 
-  // it('should be able to transfer from to contract', async() => {
-  //
-  //   const approveValue = new BigNumber(100);
-  //   await approve(address, spuul_tokenization_contract.address, approveValue,privateKey,address);
-  //     // verify if approve
-  //   (await allowance(address,spuul_tokenization_contract.address)).toString().should.be.equal(approveValue.toString())
-  //
-  //   await transferFrom(address,address, spuul_tokenization_contract.address, approveValue, privateKey, address);
-  //   (await getBalance(spuul_tokenization_contract.address)).toString().should.be.equal(approveValue.toString())
-  // })
+  it('should be able to transfer from contract', async() => {
 
-  // it('should get contract name', async() => {
-  //   const address = TestDeployer.forSign.address;
-  //   const privateKey = TestDeployer.forSign.privateKey;
-  //   const tx = TransactionBuilder.makeInvokeTransaction('name', [], spuul_tokenization_contract.address, '0', '20000', address);
-  //   TransactionBuilder.signTransaction(tx, privateKey);
-  //
-  //   const txHash = (await client.sendRawTransaction(tx.serialize())).result;
-  //   const result = await waitForTransactionReceipt(client, txHash);
-  //
-  //   const name = await getName();
-  //   console.log(result);
-  //   console.log(name);
-  // })
+    const approveValue = new BigNumber(100);
+    await approve(address, spuul_tokenization_contract.address, approveValue,privateKey,address);
+      // verify if approve
+    (await allowance(address,spuul_tokenization_contract.address)).toString().should.be.equal(approveValue.toString())
 
-    // it('should transferz', async() => {
-    //   const [ other ] = randomAccount;
-    //   const amount = new BigNumber(500);
-    //
-    //   const tx = TransactionBuilder.makeInvokeTransaction('transferz', [
-    //     new Parameter('_from', ParameterType.ByteArray, address.serialize()),
-    //     new Parameter('_to', ParameterType.ByteArray, other.address.serialize()),
-    //     new Parameter('_amount', ParameterType.ByteArray, num2ByteArray(amount)),
-    //
-    //   ], spuul_tokenization_contract.address, '0', '20000', address);
-    //   TransactionBuilder.signTransaction(tx, privateKey);
-    //
-    //   const txHash = (await client.sendRawTransaction(tx.serialize())).result;
-    //   const result = await waitForTransactionReceipt(client, txHash);
-    //
-    //    (await getBalance(other.address)).toString().should.be.equal(amount.toString())
-    // })
-
-  // it('should transferzFrom', async() => {
-  //   const [ other ] = randomAccount;
-  //   (await getBalance(other.address)).toString().should.be.equal('500')
-  //
-  //   const approveValue = new BigNumber(100);
-  //
-  //   await approve(other.address, spuul_tokenization_contract.address, approveValue, other.privateKey, other.address);
-  //     // verify if approve
-  //   (await allowance(other.address,spuul_tokenization_contract.address)).toString().should.be.equal(approveValue.toString())
-  //
-  //   const tx = TransactionBuilder.makeInvokeTransaction('transferzFrom', [
-  //     new Parameter('_originator', ParameterType.ByteArray, spuul_tokenization_contract.address.serialize()),
-  //     new Parameter('_from', ParameterType.ByteArray, other.address.serialize()),
-  //     new Parameter('_to', ParameterType.ByteArray, spuul_tokenization_contract.address.serialize()),
-  //     new Parameter('_amount', ParameterType.ByteArray, num2ByteArray(approveValue))
-  //
-  //   ], spuul_tokenization_contract.address, '0', '20000', other.address);
-  //
-  //   TransactionBuilder.signTransaction(tx,other.privateKey);
-  //
-  //   const txHash = (await client.sendRawTransaction(tx.serialize())).result;
-  //   const result = await waitForTransactionReceipt(client, txHash);
-  //
-  //   const bal = await getBalance(spuul_tokenization_contract.address);
-  //   console.log('Balance ', bal);
-  // })
+    await transferFrom(address,address, spuul_tokenization_contract.address, approveValue, privateKey, address);
+    (await getBalance(spuul_tokenization_contract.address)).toString().should.be.equal(approveValue.toString())
+  })
 
   it('should pay by other', async () => {
     const [ other ] = randomAccount;
@@ -1007,7 +921,7 @@ describe('SpuulTokenization Contract', () => {
     const orderId = "ORDERID1234";
     const orderAmount = new BigNumber(50);
 
-    await pay(other.address, spuul_tokenization_contract.address, orderAmount, orderId, other.privateKey, other.address);
+    await pay(other.address, orderAmount, orderId, other.privateKey, other.address);
     (await getBalance(spuul_tokenization_contract.address)).toString().should.be.equal(orderAmount.toString())
 
     const payment = await amountPaid(orderId);

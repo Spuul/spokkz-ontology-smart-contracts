@@ -25,8 +25,8 @@ def main(operation, args):
             return transferzFrom(args[0],args[1],args[2],args[3])
         return transferzFrom(args)
     if operation == 'pay':
-        if len(args) == 4:
-            return pay(args[0],args[1],args[2],args[3])
+        if len(args) == 3:
+            return pay(args[0],args[1],args[2])
     if operation == 'transferOwnership':
         if len(args) == 1:
             return transferOwnership(args[0])
@@ -73,8 +73,8 @@ def deploy():
     return True
 
 
-def pay(_from, _to, _amount, _orderId):
-    Require(_pay(_from, _to, _amount, _orderId))
+def pay(_from, _amount, _orderId):
+    Require(_pay(_from, _amount, _orderId))
     return True
 
 def transferOwnership(_account):
@@ -101,15 +101,14 @@ def _transferOwnership(_account):
     Put(ctx, OWNER_KEY, _account)
     return True
 
-def _pay(_from, _to, _amount, _orderId):
+def _pay(_from, _amount, _orderId):
     originator = GetExecutingScriptHash()
+    to = originator
 
     RequireScriptHash(_from)
-    RequireScriptHash(_to)
-
     Require(_amount > 0)
 
-    Require(CallOep4Contract('transferFrom', [originator,_from, _to, _amount]))
+    Require(CallOep4Contract('transferFrom', [originator, _from, to, _amount]))
 
     payment_key = concat(PAYMENT_PREFIX, _orderId)
     Put(ctx, payment_key, _amount)
