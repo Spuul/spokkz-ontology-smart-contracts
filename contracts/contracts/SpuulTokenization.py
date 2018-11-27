@@ -56,6 +56,7 @@ def confirmPayment(_from, _amount, _orderId):
     Deducts payment from approve amount.
     :param _from: from address.
     :param _amount: SPKZ amount to be deducted.
+    :param _orderId: Spuul orderId.
     """
 
     _onlyOwner();
@@ -69,7 +70,15 @@ def withdraw():
     Withdraws payments collected in the contract to the owner of the contract
     """
     _onlyOwner();
-    Require(_withdraw())
+
+    originator = GetExecutingScriptHash()
+    owner = Get(ctx, OWNER_KEY)
+    balance = SpokkzOEP4Contract('balanceOf', [originator])
+
+    Require(balance > 0)
+
+    Require(_withdraw(originator, owner, balance))
+    Notify(['withdraw', originator, owner, balance])
     return True
 
 def transferOwnership(_account):
@@ -110,14 +119,8 @@ def _confirmPayment(_from, _amount, _orderId):
     Put(ctx, payment_key, _amount)
     return True
 
-def _withdraw():
-    owner = Get(ctx, OWNER_KEY)
-    originator = GetExecutingScriptHash()
-
-    balance = SpokkzOEP4Contract('balanceOf', [originator])
-
-    Require(balance > 0)
-    Require(CallOep4Contract('transfer', [originator, owner, balance]))
+def _withdraw(_from, _to, _balance):
+    Require(CallOep4Contract('transfer', [_from, _to, _balance]))
     return True
 
 ################################################################################
