@@ -897,18 +897,17 @@ describe('SpuulTokenization Contract', () => {
     (await getBalance(spuulTokenizationContract.address)).toString().should.be.equal(approveValue.toString())
   })
 
-  it('should be able to transfer from contract', async() => {
+  it('should be able to transfer from allowance', async() => {
 
     const approveValue = new BigNumber(100);
     await approve(address, spuulTokenizationContract.address, approveValue,privateKey,address);
-      // verify if approve
     (await allowance(address,spuulTokenizationContract.address)).toString().should.be.equal(approveValue.toString())
 
     await transferFrom(address,address, spuulTokenizationContract.address, approveValue, privateKey, address);
     (await getBalance(spuulTokenizationContract.address)).toString().should.be.equal(approveValue.toString())
   })
 
-  it('should confirm payment from allowance', async () => {
+  it('should be able to approve tokens for contract', async () => {
     const [ other ] = randomAccount;
 
     // set up other to have balance and set up approved tokens
@@ -917,6 +916,27 @@ describe('SpuulTokenization Contract', () => {
 
     await transfer(address, other.address, transferValue, privateKey);
     await approve(other.address, spuulTokenizationContract.address, approveValue, other.privateKey, other.address);
+
+    (await allowance(other.address,spuulTokenizationContract.address)).toString().should.be.equal(approveValue.toString())
+  })
+
+  it('should not be able to cofirm payment by other', async() => {
+    const [ other ] = randomAccount;
+
+    const orderId = "ORDERID1234";
+    const orderAmount = new BigNumber(50);
+
+    const beforeSpuulTokenizationContractBalance = await getBalance(spuulTokenizationContract.address);
+
+    await confirmPayment(other.address, orderAmount, orderId, other.privateKey, other.address);
+    (await getBalance(spuulTokenizationContract.address)).toString().should.be.equal(beforeSpuulTokenizationContractBalance.toString());
+
+    const payment = await amountPaid(orderId);
+    payment.toString().should.be.equal('0')
+  })
+
+  it('should confirm payment from allowance', async () => {
+    const [ other ] = randomAccount;
 
     const orderId = "ORDERID1234";
     const orderAmount = new BigNumber(50);

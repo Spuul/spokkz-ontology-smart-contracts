@@ -50,8 +50,16 @@ def deploy():
 
 
 def confirmPayment(_from, _amount, _orderId):
+    """
+    Deducts payment from approve amount.
+    :param _from: from address.
+    :param _amount: SPKZ amount to be deducted.
+    """
+
     _onlyOwner();
+
     Require(_confirmPayment(_from, _amount, _orderId))
+    Notify(['confirmPayment', _from, _amount, _orderId])
     return True
 
 def transferOwnership(_account):
