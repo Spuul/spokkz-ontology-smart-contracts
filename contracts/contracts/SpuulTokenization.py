@@ -50,6 +50,7 @@ def deploy():
 
 
 def confirmPayment(_from, _amount, _orderId):
+    _onlyOwner();
     Require(_confirmPayment(_from, _amount, _orderId))
     return True
 

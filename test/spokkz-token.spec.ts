@@ -923,7 +923,7 @@ describe('SpuulTokenization Contract', () => {
 
     const beforeSpuulTokenizationContractBalance = await getBalance(spuulTokenizationContract.address);
 
-    await confirmPayment(other.address, orderAmount, orderId, other.privateKey, other.address);
+    await confirmPayment(other.address, orderAmount, orderId, privateKey, address);
     (await getBalance(spuulTokenizationContract.address)).toString().should.be.equal(beforeSpuulTokenizationContractBalance.plus(orderAmount).toString());
 
     const payment = await amountPaid(orderId);
