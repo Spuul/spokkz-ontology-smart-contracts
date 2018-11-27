@@ -16,6 +16,14 @@ ctx = GetContext()
 def main(operation, args):
     if operation == 'deploy':
         return deploy()
+    if operation == 'name':
+        return name()
+    if operation == 'transferz':
+        return transferz(args)
+    if operation == 'transferzFrom':
+        if len(args) == 4:
+            return transferzFrom(args[0],args[1],args[2],args[3])
+        return transferzFrom(args)
     if operation == 'pay':
         if len(args) == 4:
             return pay(args[0],args[1],args[2],args[3])
@@ -24,6 +32,21 @@ def main(operation, args):
             return transferOwnership(args[0])
 
     return False
+
+def name():
+    token_name = SpokkzOEP4Contract('name',0)
+    Put(ctx, 'NAME', token_name)
+    return True
+
+def transferz(args):
+    Require(CallOep4Contract('transfer', args))
+    return True
+
+def transferzFrom(_originator, _from, _to, _amount):
+    originator = GetExecutingScriptHash()
+
+    Require(CallOep4Contract('transferFrom', [originator, _from, _to, _amount]))
+    return True
 
 def deploy():
     """
@@ -50,8 +73,8 @@ def deploy():
     return True
 
 
-def pay(_originator, _from, _amount, _order_id):
-    Require(_pay(_originator, _from, _amount, _order_id))
+def pay(_from, _to, _amount, _orderId):
+    Require(_pay(_from, _to, _amount, _orderId))
     return True
 
 def transferOwnership(_account):
@@ -78,15 +101,17 @@ def _transferOwnership(_account):
     Put(ctx, OWNER_KEY, _account)
     return True
 
-def _pay(_originator, _from, _amount, _order_id):
-    RequireWitness(_originator)
+def _pay(_from, _to, _amount, _orderId):
+    originator = GetExecutingScriptHash()
+
     RequireScriptHash(_from)
+    RequireScriptHash(_to)
 
     Require(_amount > 0)
 
-    CallOep4Contract('transferFrom', _originator, _from, GetExecutingScriptHash(), _amount)
+    Require(CallOep4Contract('transferFrom', [originator,_from, _to, _amount]))
 
-    payment_key = concat(PAYMENT_PREFIX, _order_id)
+    payment_key = concat(PAYMENT_PREFIX, _orderId)
     Put(ctx, payment_key, _amount)
     return True
 
