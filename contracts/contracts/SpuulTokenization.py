@@ -19,6 +19,8 @@ def main(operation, args):
     if operation == 'confirmPayment':
         if len(args) == 3:
             return confirmPayment(args[0],args[1],args[2])
+    if operation == 'withdraw':
+        return withdraw()
     if operation == 'transferOwnership':
         if len(args) == 1:
             return transferOwnership(args[0])
@@ -62,6 +64,14 @@ def confirmPayment(_from, _amount, _orderId):
     Notify(['confirmPayment', _from, _amount, _orderId])
     return True
 
+def withdraw():
+    """
+    Withdraws payments collected in the contract to the owner of the contract
+    """
+    _onlyOwner();
+    Require(_withdraw())
+    return True
+
 def transferOwnership(_account):
     """
     Transfers the ownership of this contract to other.
@@ -70,6 +80,7 @@ def transferOwnership(_account):
     _onlyOwner()
     Require(_transferOwnership(_account))
     return True
+
 
 def CallOep4Contract(operation, params):
     return SpokkzOEP4Contract(operation, params)
@@ -97,6 +108,16 @@ def _confirmPayment(_from, _amount, _orderId):
 
     payment_key = concat(PAYMENT_PREFIX, _orderId)
     Put(ctx, payment_key, _amount)
+    return True
+
+def _withdraw():
+    owner = Get(ctx, OWNER_KEY)
+    originator = GetExecutingScriptHash()
+
+    balance = SpokkzOEP4Contract('balanceOf', [originator])
+
+    Require(balance > 0)
+    Require(CallOep4Contract('transfer', [originator, owner, balance]))
     return True
 
 ################################################################################

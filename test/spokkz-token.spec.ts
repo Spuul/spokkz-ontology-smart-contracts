@@ -649,6 +649,11 @@ describe('SpuulTokenization Contract', () => {
   let getName: (
   ) => Promise<string>;
 
+  let withdraw: (
+    privateKey: Crypto.PrivateKey,
+    payer?: Crypto.Address
+  ) => Promise<any>;
+
   before (async () => {
     // deploy the contract.
     spuulTokenizationContract = await TestDeployer.deploy('SpuulTokenization');
@@ -815,6 +820,23 @@ describe('SpuulTokenization Contract', () => {
         await waitForTransactionReceipt(client, txHash, timeout);
     };
 
+    withdraw = async(
+      privateKey: Crypto.PrivateKey,
+      payer?: Crypto.Address
+    ) => {
+      const tx = TransactionBuilder.makeInvokeTransaction(
+        'withdraw',
+        [],
+        spuulTokenizationContract.address,
+        '0',
+        '20000',
+        payer);
+
+        TransactionBuilder.signTransaction(tx, privateKey);
+        const txHash = (await client.sendRawTransaction(tx.serialize())).result;
+        await waitForTransactionReceipt(client, txHash, timeout);
+    };
+
     amountPaid = async(
       _orderId: string
     ) => {
@@ -948,5 +970,23 @@ describe('SpuulTokenization Contract', () => {
 
     const payment = await amountPaid(orderId);
     payment.toString().should.be.equal(orderAmount.toString())
-  });
+  })
+
+  it('should not be able to withdraw if not owner', async () => {
+    const [ other ] = randomAccount;
+    const beforeBalance = await getBalance(spuulTokenizationContract.address);
+
+    await withdraw(other.privateKey, other.address);
+    (await getBalance(spuulTokenizationContract.address)).toString().should.be.equal(beforeBalance.toString());
+  })
+
+  it('should be able to withdraw token from contract', async () => {
+    const beforeBalanceOwner = await getBalance(address);
+    const beforeBalanceTokenizationContract = await getBalance(spuulTokenizationContract.address);
+
+    await withdraw(privateKey, address);
+    (await getBalance(address)).toString().should.be.equal(beforeBalanceOwner.plus(beforeBalanceTokenizationContract).toString());
+    (await getBalance(spuulTokenizationContract.address)).toString().should.be.equal('0');
+
+  })
 });
