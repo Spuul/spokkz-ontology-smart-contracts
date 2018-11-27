@@ -22,7 +22,7 @@ const address = TestDeployer.forSign.address;
 let timeout = { timeout: 5000 }
 
 let contract: DeployedTransaction;
-let spuul_tokenization_contract: DeployedTransaction;
+let spuulTokenizationContract: DeployedTransaction;
 
 describe('SpokkzCoin Contract', () => {
   let randomAccount: { privateKey: Crypto.PrivateKey, address: Crypto.Address }[] = [];
@@ -651,28 +651,28 @@ describe('SpuulTokenization Contract', () => {
 
   before (async () => {
     // deploy the contract.
-    spuul_tokenization_contract = await TestDeployer.deploy('SpuulTokenization');
+    spuulTokenizationContract = await TestDeployer.deploy('SpuulTokenization');
 
-    console.log('TokenizationAddress!', spuul_tokenization_contract.codeHash)
+    console.log('TokenizationAddress!', spuulTokenizationContract.codeHash)
 
-    await spuul_tokenization_contract.deployed();
+    await spuulTokenizationContract.deployed();
     client = TestDeployer.client;
 
     isDeployed = async () => {
       const key = utils.str2hexstr('DEPLOYED');
-      const value = (await client.getStorage(spuul_tokenization_contract.codeHash, key)).result;
+      const value = (await client.getStorage(spuulTokenizationContract.codeHash, key)).result;
       return (value !== null);
     };
 
     getOwner = async () => {
       const key = utils.str2hexstr('___OWNER');
-      const hexAddress = (await client.getStorage(spuul_tokenization_contract.codeHash, key)).result;
+      const hexAddress = (await client.getStorage(spuulTokenizationContract.codeHash, key)).result;
       return Crypto.Address.deserialize(new utils.StringReader(hexAddress));
     };
 
     getName = async () => {
       const key = utils.str2hexstr('NAME');
-      const value = (await client.getStorage(spuul_tokenization_contract.codeHash, key)).result;
+      const value = (await client.getStorage(spuulTokenizationContract.codeHash, key)).result;
       return utils.hexstr2str(value);
     };
 
@@ -686,7 +686,7 @@ describe('SpuulTokenization Contract', () => {
         [
           new Parameter('_account', ParameterType.ByteArray, address.serialize())
         ],
-        spuul_tokenization_contract.address,
+        spuulTokenizationContract.address,
         '0',
         '20000',
         payer
@@ -805,7 +805,7 @@ describe('SpuulTokenization Contract', () => {
           new Parameter('_amount', ParameterType.ByteArray, num2ByteArray(_amount)),
           new Parameter('_orderId', ParameterType.ByteArray, utils.str2hexstr(_orderId)),
         ],
-        spuul_tokenization_contract.address,
+        spuulTokenizationContract.address,
         '0',
         '20000',
         payer);
@@ -819,7 +819,7 @@ describe('SpuulTokenization Contract', () => {
       _orderId: string
     ) => {
       const key = utils.str2hexstr('_____pay') + utils.str2hexstr(_orderId)
-      const value = (await client.getStorage(spuul_tokenization_contract.codeHash, key)).result;
+      const value = (await client.getStorage(spuulTokenizationContract.codeHash, key)).result;
       return (value === null) ? new BigNumber(0) : new BigNumber(utils.reverseHex(value), 16);
     };
 
@@ -833,7 +833,7 @@ describe('SpuulTokenization Contract', () => {
 
   // it ('should not be able to be deployed by other.', async () => {
   //   const [ other ] = randomAccount;
-  //   const tx = TransactionBuilder.makeInvokeTransaction('deploy', [], spuul_tokenization_contract.address, '0', '20000', other.address);
+  //   const tx = TransactionBuilder.makeInvokeTransaction('deploy', [], spuulTokenizationContract.address, '0', '20000', other.address);
   //   TransactionBuilder.signTransaction(tx, other.privateKey);
   //
   //   const txHash = (await client.sendRawTransaction(tx.serialize())).result;
@@ -846,7 +846,7 @@ describe('SpuulTokenization Contract', () => {
   it ('should deploy by deployer', async () => {
     const address = TestDeployer.forSign.address;
     const privateKey = TestDeployer.forSign.privateKey;
-    const tx = TransactionBuilder.makeInvokeTransaction('deploy', [], spuul_tokenization_contract.address, '0', '20000', address);
+    const tx = TransactionBuilder.makeInvokeTransaction('deploy', [], spuulTokenizationContract.address, '0', '20000', address);
     TransactionBuilder.signTransaction(tx, privateKey);
 
     const txHash = (await client.sendRawTransaction(tx.serialize())).result;
@@ -893,19 +893,19 @@ describe('SpuulTokenization Contract', () => {
   it('should be able to transfer to contract', async() => {
     const approveValue = new BigNumber(100);
 
-    await transfer(address, spuul_tokenization_contract.address, approveValue, privateKey);
-    (await getBalance(spuul_tokenization_contract.address)).toString().should.be.equal(approveValue.toString())
+    await transfer(address, spuulTokenizationContract.address, approveValue, privateKey);
+    (await getBalance(spuulTokenizationContract.address)).toString().should.be.equal(approveValue.toString())
   })
 
   it('should be able to transfer from contract', async() => {
 
     const approveValue = new BigNumber(100);
-    await approve(address, spuul_tokenization_contract.address, approveValue,privateKey,address);
+    await approve(address, spuulTokenizationContract.address, approveValue,privateKey,address);
       // verify if approve
-    (await allowance(address,spuul_tokenization_contract.address)).toString().should.be.equal(approveValue.toString())
+    (await allowance(address,spuulTokenizationContract.address)).toString().should.be.equal(approveValue.toString())
 
-    await transferFrom(address,address, spuul_tokenization_contract.address, approveValue, privateKey, address);
-    (await getBalance(spuul_tokenization_contract.address)).toString().should.be.equal(approveValue.toString())
+    await transferFrom(address,address, spuulTokenizationContract.address, approveValue, privateKey, address);
+    (await getBalance(spuulTokenizationContract.address)).toString().should.be.equal(approveValue.toString())
   })
 
   it('should pay by other', async () => {
@@ -916,13 +916,15 @@ describe('SpuulTokenization Contract', () => {
     const approveValue = new BigNumber(100);
 
     await transfer(address, other.address, transferValue, privateKey);
-    await approve(other.address, spuul_tokenization_contract.address, approveValue, other.privateKey, other.address);
+    await approve(other.address, spuulTokenizationContract.address, approveValue, other.privateKey, other.address);
 
     const orderId = "ORDERID1234";
     const orderAmount = new BigNumber(50);
 
+    const beforeSpuulTokenizationContractBalance = await getBalance(spuulTokenizationContract.address);
+
     await pay(other.address, orderAmount, orderId, other.privateKey, other.address);
-    (await getBalance(spuul_tokenization_contract.address)).toString().should.be.equal(orderAmount.toString())
+    (await getBalance(spuulTokenizationContract.address)).toString().should.be.equal(beforeSpuulTokenizationContractBalance.plus(orderAmount).toString());
 
     const payment = await amountPaid(orderId);
     payment.toString().should.be.equal(orderAmount.toString())
