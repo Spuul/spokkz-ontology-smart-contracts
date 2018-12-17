@@ -88,13 +88,13 @@ describe('SpokkzCoin Contract', () => {
     client = TestDeployer.client;
 
     isDeployed = async () => {
-      const key = utils.str2hexstr('DEPLOYED');
+      const key = utils.str2hexstr('DEPLOYED_SPKZ');
       const value = (await client.getStorage(contract.codeHash, key)).result;
       return (value !== null);
     };
 
     getOwner = async () => {
-      const key = utils.str2hexstr('___OWNER');
+      const key = utils.str2hexstr('___OWNER_SPKZ');
       const hexAddress = (await client.getStorage(contract.codeHash, key)).result;
       return Crypto.Address.deserialize(new utils.StringReader(hexAddress));
     };
@@ -121,14 +121,14 @@ describe('SpokkzCoin Contract', () => {
     };
 
     totalSupply = async () => {
-      const hexValue = (await client.getStorage(contract.codeHash, utils.str2hexstr('__SUPPLY'))).result;
+      const hexValue = (await client.getStorage(contract.codeHash, utils.str2hexstr('__SUPPLY_SPKZ'))).result;
       return new BigNumber((hexValue === null) ? '0' : utils.reverseHex(hexValue), 16);
     };
 
     getBalance = async (
       address: Crypto.Address
     ) => {
-      const key = utils.str2hexstr('_____own') + address.serialize();
+      const key = utils.str2hexstr('_____own_spkz') + address.serialize();
       const balance = (await client.getStorage(contract.codeHash, key)).result;
       return new BigNumber((typeof balance === 'string') ? utils.reverseHex(balance) : '00', 16);
     };
@@ -162,7 +162,7 @@ describe('SpokkzCoin Contract', () => {
       _from: Crypto.Address,
       _to: Crypto.Address
     ) => {
-      const key = utils.str2hexstr('___allow') + _from.serialize() + _to.serialize();
+      const key = utils.str2hexstr('___allow_spkz') + _from.serialize() + _to.serialize();
       const allowed = (await client.getStorage(contract.codeHash, key)).result;
 
       return (allowed === null) ? new BigNumber(0) : new BigNumber(utils.reverseHex(allowed), 16);
@@ -664,13 +664,13 @@ describe('SpuulTokenization Contract', () => {
     client = TestDeployer.client;
 
     isDeployed = async () => {
-      const key = utils.str2hexstr('DEPLOYED');
+      const key = utils.str2hexstr('DEPLOYED_SPUUL');
       const value = (await client.getStorage(spuulTokenizationContract.codeHash, key)).result;
       return (value !== null);
     };
 
     getOwner = async () => {
-      const key = utils.str2hexstr('___OWNER');
+      const key = utils.str2hexstr('___OWNER_SPUUL');
       const hexAddress = (await client.getStorage(spuulTokenizationContract.codeHash, key)).result;
       return Crypto.Address.deserialize(new utils.StringReader(hexAddress));
     };
@@ -705,7 +705,7 @@ describe('SpuulTokenization Contract', () => {
     getBalance = async (
       address: Crypto.Address
     ) => {
-      const key = utils.str2hexstr('_____own') + address.serialize();
+      const key = utils.str2hexstr('_____own_spkz') + address.serialize();
       const balance = (await client.getStorage(contract.codeHash, key)).result;
       return new BigNumber((typeof balance === 'string') ? utils.reverseHex(balance) : '00', 16);
     };
@@ -739,7 +739,7 @@ describe('SpuulTokenization Contract', () => {
       _from: Crypto.Address,
       _to: Crypto.Address
     ) => {
-      const key = utils.str2hexstr('___allow') + _from.serialize() + _to.serialize();
+      const key = utils.str2hexstr('___allow_spkz') + _from.serialize() + _to.serialize();
       const allowed = (await client.getStorage(contract.codeHash, key)).result;
 
       return (allowed === null) ? new BigNumber(0) : new BigNumber(utils.reverseHex(allowed), 16);
@@ -840,7 +840,7 @@ describe('SpuulTokenization Contract', () => {
     amountPaid = async(
       _orderId: string
     ) => {
-      const key = utils.str2hexstr('_____pay') + utils.str2hexstr(_orderId)
+      const key = utils.str2hexstr('_____pay_spuul') + utils.str2hexstr(_orderId)
       const value = (await client.getStorage(spuulTokenizationContract.codeHash, key)).result;
       return (value === null) ? new BigNumber(0) : new BigNumber(utils.reverseHex(value), 16);
     };

@@ -1,15 +1,82 @@
-from boa.interop.System.ExecutionEngine import GetExecutingScriptHash
 from boa.interop.System.Runtime import *
-from boa.interop.System.App import RegisterAppCall, DynamicAppCall
-from libs.SafeCheck import *
+from boa.interop.System.Storage import *
+from boa.builtins import *
 
-SpokkzOEP4Contract = RegisterAppCall('5682464183f3972abbf72105a8e2a89ac5083a90', 'operation', 'args')
+def Revert():
+    """
+    Revert the transaction by raising an exception.
+    """
+    raise Exception(0x00)
+
+def SafePut(context, key, value):
+    if value == 0:
+        Delete(context, key)
+    else:
+        Put(context, key, value)
+    return True
+
+def Require(condition):
+    """
+    If not satisfying the condition, revert the transaction. All
+    changed storage will be rolled back.
+    :param condition: required condition.
+    :return: True if satisfying the condition.
+    """
+    if not condition:
+        _ = Revert()
+    return True
+
+
+def RequireScriptHash(key):
+    """
+    Checks the bytearray parameter is script hash or not. Script Hash
+    length should be equal to 20.
+    :param key: bytearray parameter to check script hash format.
+    :return: True if script hash or revert the transaction.
+    """
+    _ = Require(len(key) == 20)
+    return True
+
+
+def RequireWitness(witness):
+    """
+    Checks the transaction sender is equal to the witness. If not
+    satisfying, revert the transaction.
+    :param witness: required transaction sender
+    :return: True if transaction sender or revert the transaction.
+    """
+    is_witness = CheckWitness(witness)
+    _ = Require(is_witness)
+    return True
+
+
+"""
+ SafeMath produces elementary operations such as plus, minus but
+ check whether it is safe and revert the transaction if it is not safe.
+"""
+
+def uSub(a, b):
+    """
+    Operates a minus b with condition that a - b can never be below 0.
+    :param a: operand a
+    :param b: operand b
+    :return: a - b if a - b > 0 or revert the transaction.
+    """
+    Require(a >= b)
+    return a - b
+
+from boa.interop.System.ExecutionEngine import GetExecutingScriptHash
+from boa.interop.System.App import RegisterAppCall, DynamicAppCall
+
+SpokkzOEP4Contract = RegisterAppCall('cf6460564d3f6884fb6b98f02ff24e22cb2f0c90', 'operation', 'args')
 
 DEPLOYER = ToScriptHash('Ac725LuR7wo481zvNmc9jerqCzoCArQjtw')
 
-OWNER_KEY = '___OWNER'
+OWNER_KEY = '___OWNER_SPUUL'
 
-PAYMENT_PREFIX = '_____pay'
+PAYMENT_PREFIX = '_____pay_spuul'
+
+DEPLOYED_KEY = 'DEPLOYED_SPUUL'
 
 ctx = GetContext()
 
@@ -37,12 +104,12 @@ def deploy():
     """
 
     is_witness = CheckWitness(DEPLOYER)
-    is_deployed = Get(ctx, 'DEPLOYED')
+    is_deployed = Get(ctx, DEPLOYED_KEY)
     Require(is_witness)                     # only can be initialized by deployer
     Require(not is_deployed)                # only can deploy once
 
     # disable to deploy again
-    Put(ctx, 'DEPLOYED', 1)
+    Put(ctx, DEPLOYED_KEY, 1)
 
     # the first owner is the deployer
     # TODO: can transfer ownership to other by calling `TransferOwner` function
