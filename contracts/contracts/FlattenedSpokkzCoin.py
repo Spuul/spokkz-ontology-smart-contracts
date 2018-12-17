@@ -73,7 +73,7 @@ TOKEN_SYMBOL = 'SPKZ'
 ################################################################################
 # TOKEN INFO CONSTANTS
 
-DEPLOYER = ToScriptHash('AeMW5Q7ujm5gz1Xh7SkPe7Cp3mS8g7ofyq')
+DEPLOYER = ToScriptHash('AZgDDvShZpuW3Ved3Ku7dY5TkWJvfdSyih')
 INIT_SUPPLY = 1000000000
 TOKEN_DECIMALS = 8
 FACTOR = 100000000
@@ -82,8 +82,9 @@ FACTOR = 100000000
 # STORAGE KEY CONSTANT
 # Belows are storage key for some variable token information.
 
-OWNER_KEY = '___OWNER'
-SPKZ_SUPPLY_KEY = '__SUPPLY'
+DEPLOYED_KEY = 'DEPLOYED_SPKZ'
+OWNER_KEY = '___OWNER_SPKZ'
+SPKZ_SUPPLY_KEY = '__SUPPLY_SPKZ'
 
 
 ################################################################################
@@ -91,8 +92,8 @@ SPKZ_SUPPLY_KEY = '__SUPPLY'
 # Since all data are stored in the key-value storage, the data need to be
 # classified by key prefix. All key prefixes length must be the same.
 
-OWN_PREFIX = '_____own'
-ALLOWANCE_PREFIX = '___allow'
+OWN_PREFIX = '_____own_spkz'
+ALLOWANCE_PREFIX = '___allow_spkz'
 
 
 ################################################################################
@@ -145,12 +146,12 @@ def deploy():
     """
 
     is_witness = CheckWitness(DEPLOYER)
-    is_deployed = Get(ctx, 'DEPLOYED')
+    is_deployed = Get(ctx, DEPLOYED_KEY)
     Require(is_witness)                     # only can be initialized by deployer
     Require(not is_deployed)                # only can deploy once
 
     # disable to deploy again
-    Put(ctx, 'DEPLOYED', 1)
+    Put(ctx, DEPLOYED_KEY, 1)
 
     # the first owner is the deployer
     # can transfer ownership to other by calling `TransferOwner` function
@@ -218,7 +219,7 @@ def transferFrom(_originator, _from, _to, _amount):
     :param _amount: SPKZ amount.
     """
     Require(_transferFrom(_originator, _from, _to, _amount))
-    Notify(['transfer', _from, _to, _amount])
+    Notify(['transferFrom', _originator, _from, _to, _amount])
     return True
 
 
