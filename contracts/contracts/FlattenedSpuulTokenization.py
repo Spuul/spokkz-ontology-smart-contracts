@@ -68,13 +68,15 @@ def uSub(a, b):
 from boa.interop.System.ExecutionEngine import GetExecutingScriptHash
 from boa.interop.System.App import RegisterAppCall, DynamicAppCall
 
-SpokkzOEP4Contract = RegisterAppCall('51cd582cbd86deaac9ab98e958237f518d89710d', 'operation', 'args')
+SpokkzOEP4Contract = RegisterAppCall('e02053f4f4f1945b68d78426c4e8e90690d11332', 'operation', 'args')
 
-DEPLOYER = ToScriptHash('AeMW5Q7ujm5gz1Xh7SkPe7Cp3mS8g7ofyq')
+DEPLOYER = ToScriptHash('AZgDDvShZpuW3Ved3Ku7dY5TkWJvfdSyih')
 
-OWNER_KEY = '___OWNER'
+OWNER_KEY = '___OWNER_SPUUL'
 
-PAYMENT_PREFIX = '_____pay'
+PAYMENT_PREFIX = '_____pay_spuul'
+
+DEPLOYED_KEY = 'DEPLOYED_SPUUL'
 
 ctx = GetContext()
 
@@ -102,12 +104,12 @@ def deploy():
     """
 
     is_witness = CheckWitness(DEPLOYER)
-    is_deployed = Get(ctx, 'DEPLOYED')
+    is_deployed = Get(ctx, DEPLOYED_KEY)
     Require(is_witness)                     # only can be initialized by deployer
     Require(not is_deployed)                # only can deploy once
 
     # disable to deploy again
-    Put(ctx, 'DEPLOYED', 1)
+    Put(ctx, DEPLOYED_KEY, 1)
 
     # the first owner is the deployer
     # TODO: can transfer ownership to other by calling `TransferOwner` function
