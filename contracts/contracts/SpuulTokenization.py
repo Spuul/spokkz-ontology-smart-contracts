@@ -86,6 +86,9 @@ def main(operation, args):
     if operation == 'confirmPayment':
         if len(args) == 3:
             return confirmPayment(args[0],args[1],args[2])
+    if operation == 'amountPaid':
+        if len(args) == 1:
+            return amountPaid(args[0])
     if operation == 'withdraw':
         return withdraw()
     if operation == 'transferOwnership':
@@ -131,6 +134,14 @@ def confirmPayment(_from, _amount, _orderId):
     Require(_confirmPayment(_from, _amount, _orderId))
     Notify(['confirmPayment', _from, _amount, _orderId])
     return True
+
+def amountPaid(_orderId):
+    """
+    Gets the token amount paid for the given order id.
+    """
+    payment_key = concat(PAYMENT_PREFIX, _orderId)
+    amount = Get(ctx, payment_key)
+    return amount
 
 def withdraw():
     """
