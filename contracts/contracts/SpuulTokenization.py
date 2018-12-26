@@ -191,9 +191,12 @@ def _confirmPayment(_from, _amount, _orderId):
     RequireScriptHash(_from)
     Require(_amount > 0)
 
+    payment_key = concat(PAYMENT_PREFIX, _orderId)
+    is_paid = Get(ctx, payment_key)
+
+    Require(not is_paid) # only can be paid once
     Require(CallOep4Contract('transferFrom', [originator, _from, to, _amount]))
 
-    payment_key = concat(PAYMENT_PREFIX, _orderId)
     Put(ctx, payment_key, _amount)
     return True
 

@@ -972,6 +972,23 @@ describe('SpuulTokenization Contract', () => {
     payment.toString().should.be.equal(orderAmount.toString())
   })
 
+  it('should not be able to confirm payment for the same order id', async () => {
+    const [ other ] = randomAccount;
+
+    const orderId = "ORDERID1234";
+    const orderAmount = new BigNumber(10);
+
+    const beforeSpuulTokenizationContractBalance = await getBalance(spuulTokenizationContract.address);
+
+    await confirmPayment(other.address, orderAmount, orderId, privateKey, address);
+    (await getBalance(spuulTokenizationContract.address)).toString().should.be.equal(beforeSpuulTokenizationContractBalance.toString());
+
+    const originalOrderAmount = new BigNumber(50);
+
+    const payment = await amountPaid(orderId);
+    payment.toString().should.be.equal(originalOrderAmount.toString())
+  })
+
   it('should not be able to withdraw if not owner', async () => {
     const [ other ] = randomAccount;
     const beforeBalance = await getBalance(spuulTokenizationContract.address);
