@@ -73,7 +73,7 @@ TOKEN_SYMBOL = 'SPKZ'
 ################################################################################
 # TOKEN INFO CONSTANTS
 
-DEPLOYER = ToScriptHash('AZgDDvShZpuW3Ved3Ku7dY5TkWJvfdSyih')
+DEPLOYER = ToScriptHash('Ac725LuR7wo481zvNmc9jerqCzoCArQjtw')
 INIT_SUPPLY = 1000000000
 TOKEN_DECIMALS = 8
 FACTOR = 100000000
@@ -82,9 +82,9 @@ FACTOR = 100000000
 # STORAGE KEY CONSTANT
 # Belows are storage key for some variable token information.
 
-DEPLOYED_KEY = 'DEPLOYED_SPKZ'
-OWNER_KEY = '___OWNER_SPKZ'
-SPKZ_SUPPLY_KEY = '__SUPPLY_SPKZ'
+DEPLOYED_KEY = 'DEPLOYED_SPKZ01'
+OWNER_KEY = '___OWNER_SPKZ01'
+SPKZ_SUPPLY_KEY = '__SUPPLY_SPKZ01'
 
 
 ################################################################################
@@ -92,8 +92,8 @@ SPKZ_SUPPLY_KEY = '__SUPPLY_SPKZ'
 # Since all data are stored in the key-value storage, the data need to be
 # classified by key prefix. All key prefixes length must be the same.
 
-OWN_PREFIX = '_____own_spkz'
-ALLOWANCE_PREFIX = '___allow_spkz'
+OWN_PREFIX = '_____own_spkz01'
+ALLOWANCE_PREFIX = '___allow_spkz01'
 
 
 ################################################################################

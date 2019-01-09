@@ -68,15 +68,15 @@ def uSub(a, b):
 from boa.interop.System.ExecutionEngine import GetExecutingScriptHash
 from boa.interop.System.App import RegisterAppCall, DynamicAppCall
 
-SpokkzOEP4Contract = RegisterAppCall('e02053f4f4f1945b68d78426c4e8e90690d11332', 'operation', 'args')
+SpokkzOEP4Contract = RegisterAppCall('cf6460564d3f6884fb6b98f02ff24e22cb2f0c90', 'operation', 'args')
 
-DEPLOYER = ToScriptHash('AZgDDvShZpuW3Ved3Ku7dY5TkWJvfdSyih')
+DEPLOYER = ToScriptHash('Ac725LuR7wo481zvNmc9jerqCzoCArQjtw')
 
-OWNER_KEY = '___OWNER_SPUUL'
+OWNER_KEY = '___OWNER_SPUUL01'
 
-PAYMENT_PREFIX = '_____pay_spuul'
+PAYMENT_PREFIX = '_____pay_spuul01'
 
-DEPLOYED_KEY = 'DEPLOYED_SPUUL'
+DEPLOYED_KEY = 'DEPLOYED_SPUUL01'
 
 ctx = GetContext()
 
@@ -86,6 +86,9 @@ def main(operation, args):
     if operation == 'confirmPayment':
         if len(args) == 3:
             return confirmPayment(args[0],args[1],args[2])
+    if operation == 'amountPaid':
+        if len(args) == 1:
+            return amountPaid(args[0])
     if operation == 'withdraw':
         return withdraw()
     if operation == 'transferOwnership':
@@ -131,6 +134,14 @@ def confirmPayment(_from, _amount, _orderId):
     Require(_confirmPayment(_from, _amount, _orderId))
     Notify(['confirmPayment', _from, _amount, _orderId])
     return True
+
+def amountPaid(_orderId):
+    """
+    Gets the token amount paid for the given order id.
+    """
+    payment_key = concat(PAYMENT_PREFIX, _orderId)
+    amount = Get(ctx, payment_key)
+    return amount
 
 def withdraw():
     """
@@ -180,9 +191,12 @@ def _confirmPayment(_from, _amount, _orderId):
     RequireScriptHash(_from)
     Require(_amount > 0)
 
+    payment_key = concat(PAYMENT_PREFIX, _orderId)
+    is_paid = Get(ctx, payment_key)
+
+    Require(not is_paid) # only can be paid once
     Require(CallOep4Contract('transferFrom', [originator, _from, to, _amount]))
 
-    payment_key = concat(PAYMENT_PREFIX, _orderId)
     Put(ctx, payment_key, _amount)
     return True
 
