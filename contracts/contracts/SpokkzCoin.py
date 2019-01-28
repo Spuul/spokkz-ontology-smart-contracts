@@ -5,7 +5,6 @@ from boa.builtins import *
 from libs.SafeMath import *
 from libs.SafeCheck import *
 from libs.Utils import *
-
 ctx = GetContext()
 
 TOKEN_NAME = 'Spokkz Token'
@@ -14,7 +13,7 @@ TOKEN_SYMBOL = 'SPKZ'
 ################################################################################
 # TOKEN INFO CONSTANTS
 
-DEPLOYER = ToScriptHash('Ac725LuR7wo481zvNmc9jerqCzoCArQjtw')
+DEPLOYER = ToScriptHash('AZgDDvShZpuW3Ved3Ku7dY5TkWJvfdSyih')
 INIT_SUPPLY = 1000000000
 TOKEN_DECIMALS = 8
 FACTOR = 100000000
@@ -23,9 +22,9 @@ FACTOR = 100000000
 # STORAGE KEY CONSTANT
 # Belows are storage key for some variable token information.
 
-DEPLOYED_KEY = 'DEPLOYED_SPKZ'
-OWNER_KEY = '___OWNER_SPKZ'
-SPKZ_SUPPLY_KEY = '__SUPPLY_SPKZ'
+DEPLOYED_KEY = 'DEPLOYED_SPKZ03'
+OWNER_KEY = '___OWNER_SPKZ03'
+SPKZ_SUPPLY_KEY = '__SUPPLY_SPKZ03'
 
 
 ################################################################################
@@ -33,14 +32,14 @@ SPKZ_SUPPLY_KEY = '__SUPPLY_SPKZ'
 # Since all data are stored in the key-value storage, the data need to be
 # classified by key prefix. All key prefixes length must be the same.
 
-OWN_PREFIX = '_____own_spkz'
-ALLOWANCE_PREFIX = '___allow_spkz'
+OWN_PREFIX = '_____own_spkz03'
+ALLOWANCE_PREFIX = '___allow_spkz03'
 
 
 ################################################################################
 #
 
-def main(operation, args):
+def Main(operation, args):
     if operation == 'deploy':
         return deploy()
     if operation == 'name':
@@ -160,7 +159,7 @@ def transferFrom(_originator, _from, _to, _amount):
     :param _amount: SPKZ amount.
     """
     Require(_transferFrom(_originator, _from, _to, _amount))
-    Notify(['transferFrom', _originator, _from, _to, _amount])
+    Notify(['transfer', _from, _to, _amount])
     return True
 
 
