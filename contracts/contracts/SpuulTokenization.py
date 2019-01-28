@@ -68,19 +68,19 @@ def uSub(a, b):
 from boa.interop.System.ExecutionEngine import GetExecutingScriptHash
 from boa.interop.System.App import RegisterAppCall, DynamicAppCall
 
-SpokkzOEP4Contract = RegisterAppCall('cf6460564d3f6884fb6b98f02ff24e22cb2f0c90', 'operation', 'args')
+SpokkzOEP4Contract = RegisterAppCall('b52b63902ed5d6455cd7929a13613fc1b88a056f', 'operation', 'args')
 
-DEPLOYER = ToScriptHash('Ac725LuR7wo481zvNmc9jerqCzoCArQjtw')
+DEPLOYER = ToScriptHash('AZgDDvShZpuW3Ved3Ku7dY5TkWJvfdSyih')
 
-OWNER_KEY = '___OWNER_SPUUL'
+OWNER_KEY = '___OWNER_SPUUL03'
 
-PAYMENT_PREFIX = '_____pay_spuul'
+PAYMENT_PREFIX = '_____pay_spuul03'
 
-DEPLOYED_KEY = 'DEPLOYED_SPUUL'
+DEPLOYED_KEY = 'DEPLOYED_SPUUL03'
 
 ctx = GetContext()
 
-def main(operation, args):
+def Main(operation, args):
     if operation == 'deploy':
         return deploy()
     if operation == 'confirmPayment':
